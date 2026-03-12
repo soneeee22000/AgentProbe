@@ -1,0 +1,183 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* AgentProbe observatory palette */
+  --color-thought: #4fc3f7;
+  --color-action: #81c784;
+  --color-observation: #ffb74d;
+  --color-final: #ce93d8;
+  --color-error: #ef5350;
+  --color-system: #546e7a;
+}
+
+/* AgentProbe dark theme — always dark */
+:root {
+  --background: #0a0c0f;
+  --foreground: #c9d4e0;
+  --card: #10141a;
+  --card-foreground: #c9d4e0;
+  --popover: #10141a;
+  --popover-foreground: #c9d4e0;
+  --primary: #4fc3f7;
+  --primary-foreground: #0a0c0f;
+  --secondary: #1e2530;
+  --secondary-foreground: #c9d4e0;
+  --muted: #1e2530;
+  --muted-foreground: #6b7a8d;
+  --accent: #1e2530;
+  --accent-foreground: #c9d4e0;
+  --destructive: #ef5350;
+  --border: #1e2530;
+  --input: #2a3340;
+  --ring: #4fc3f7;
+  --chart-1: #4fc3f7;
+  --chart-2: #81c784;
+  --chart-3: #ffb74d;
+  --chart-4: #ce93d8;
+  --chart-5: #ef5350;
+  --radius: 0.375rem;
+  --sidebar: #10141a;
+  --sidebar-foreground: #c9d4e0;
+  --sidebar-primary: #4fc3f7;
+  --sidebar-primary-foreground: #0a0c0f;
+  --sidebar-accent: #1e2530;
+  --sidebar-accent-foreground: #c9d4e0;
+  --sidebar-border: #1e2530;
+  --sidebar-ring: #4fc3f7;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-mono;
+  }
+}
+
+/* Step type background colors */
+.step-thought {
+  background: rgba(79, 195, 247, 0.06);
+  border-left: 2px solid #4fc3f7;
+}
+.step-action {
+  background: rgba(129, 199, 132, 0.06);
+  border-left: 2px solid #81c784;
+}
+.step-observation {
+  background: rgba(255, 183, 77, 0.06);
+  border-left: 2px solid #ffb74d;
+}
+.step-final_answer {
+  background: rgba(206, 147, 216, 0.08);
+  border-left: 2px solid #ce93d8;
+}
+.step-error {
+  background: rgba(239, 83, 80, 0.08);
+  border-left: 2px solid #ef5350;
+}
+.step-system {
+  background: rgba(84, 110, 122, 0.04);
+  border-left: 2px solid #546e7a;
+}
+
+/* Animations */
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-step-in {
+  animation: step-in 0.25s ease;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-cursor-blink {
+  animation: cursor-blink 0.8s step-end infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a3340;
+  border-radius: 4px;
+}

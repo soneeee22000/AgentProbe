@@ -1,0 +1,422 @@
+[
+  {
+    "id": "math-001",
+    "query": "What is 25 * 17?",
+    "category": "math",
+    "difficulty": "easy",
+    "expected_answer": "425",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "math-002",
+    "query": "What is the square root of 144?",
+    "category": "math",
+    "difficulty": "easy",
+    "expected_answer": "12",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "math-003",
+    "query": "What is 15% of 250?",
+    "category": "math",
+    "difficulty": "easy",
+    "expected_answer": "37.5",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "math-004",
+    "query": "Convert 5 miles to kilometers",
+    "category": "math",
+    "difficulty": "easy",
+    "expected_answer": "8.047",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "math-005",
+    "query": "What is 2^10?",
+    "category": "math",
+    "difficulty": "easy",
+    "expected_answer": "1024",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "math-006",
+    "query": "What is (45 + 33) * 2 - 18?",
+    "category": "math",
+    "difficulty": "medium",
+    "expected_answer": "138",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "math-007",
+    "query": "If a shirt costs $45 and is 20% off, what is the final price?",
+    "category": "math",
+    "difficulty": "medium",
+    "expected_answer": "36",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "math-008",
+    "query": "What is the area of a circle with radius 7?",
+    "category": "math",
+    "difficulty": "medium",
+    "expected_answer": "153.94",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "math-009",
+    "query": "How many seconds are in 3.5 hours?",
+    "category": "math",
+    "difficulty": "medium",
+    "expected_answer": "12600",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "math-010",
+    "query": "What is the compound interest on $1000 at 5% for 3 years?",
+    "category": "math",
+    "difficulty": "hard",
+    "expected_answer": "157.63",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "math-011",
+    "query": "What is 17 factorial divided by 15 factorial?",
+    "category": "math",
+    "difficulty": "hard",
+    "expected_answer": "272",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "math-012",
+    "query": "If a train travels at 60 mph for 2.5 hours, then 80 mph for 1.5 hours, what total distance does it cover?",
+    "category": "math",
+    "difficulty": "hard",
+    "expected_answer": "270",
+    "expected_tools": ["calculator"]
+  },
+
+  {
+    "id": "search-001",
+    "query": "What is the capital of France?",
+    "category": "search",
+    "difficulty": "easy",
+    "expected_answer": "Paris",
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "search-002",
+    "query": "Who wrote Romeo and Juliet?",
+    "category": "search",
+    "difficulty": "easy",
+    "expected_answer": "William Shakespeare",
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "search-003",
+    "query": "What is the chemical symbol for gold?",
+    "category": "search",
+    "difficulty": "easy",
+    "expected_answer": "Au",
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "search-004",
+    "query": "What year was the first iPhone released?",
+    "category": "search",
+    "difficulty": "easy",
+    "expected_answer": "2007",
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "search-005",
+    "query": "What is the tallest mountain in the world?",
+    "category": "search",
+    "difficulty": "easy",
+    "expected_answer": "Mount Everest",
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "search-006",
+    "query": "Who is the current CEO of Tesla?",
+    "category": "search",
+    "difficulty": "medium",
+    "expected_answer": "Elon Musk",
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "search-007",
+    "query": "What programming language was Python named after?",
+    "category": "search",
+    "difficulty": "medium",
+    "expected_answer": "Monty Python",
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "search-008",
+    "query": "What is the population of Tokyo?",
+    "category": "search",
+    "difficulty": "medium",
+    "expected_answer": "14 million",
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "search-009",
+    "query": "When was the first web browser created?",
+    "category": "search",
+    "difficulty": "hard",
+    "expected_answer": "1990",
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "search-010",
+    "query": "What is the deepest point in the ocean?",
+    "category": "search",
+    "difficulty": "medium",
+    "expected_answer": "Mariana Trench",
+    "expected_tools": ["web_search"]
+  },
+
+  {
+    "id": "reason-001",
+    "query": "If all cats are animals and some animals are pets, can we conclude all cats are pets?",
+    "category": "reasoning",
+    "difficulty": "easy",
+    "expected_answer": "No",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "reason-002",
+    "query": "A farmer has 17 sheep. All but 9 die. How many sheep are left?",
+    "category": "reasoning",
+    "difficulty": "easy",
+    "expected_answer": "9",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "reason-003",
+    "query": "What comes next in the sequence: 2, 6, 12, 20, 30, ?",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "expected_answer": "42",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "reason-004",
+    "query": "If it takes 5 machines 5 minutes to make 5 widgets, how long does it take 100 machines to make 100 widgets?",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "expected_answer": "5 minutes",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "reason-005",
+    "query": "A bat and a ball cost $1.10 together. The bat costs $1.00 more than the ball. How much does the ball cost?",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "expected_answer": "$0.05",
+    "expected_tools": ["think", "calculator"]
+  },
+  {
+    "id": "reason-006",
+    "query": "You have 8 balls, one is heavier. Using a balance scale, what is the minimum number of weighings needed to find the heavy ball?",
+    "category": "reasoning",
+    "difficulty": "hard",
+    "expected_answer": "2",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "reason-007",
+    "query": "Three friends split a $30 bill evenly, each paying $10. The waiter returns $5, they each take $1 back and tip $2. They each paid $9, totaling $27, plus the $2 tip is $29. Where is the missing dollar?",
+    "category": "reasoning",
+    "difficulty": "hard",
+    "expected_answer": "There is no missing dollar",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "reason-008",
+    "query": "If you rearrange the letters CIFAIPC, you get the name of a major body of water. What is it?",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "expected_answer": "Pacific",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "reason-009",
+    "query": "How many times does the digit 1 appear when writing all numbers from 1 to 100?",
+    "category": "reasoning",
+    "difficulty": "hard",
+    "expected_answer": "21",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "reason-010",
+    "query": "If yesterday was two days after Monday, what day is tomorrow?",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "expected_answer": "Friday",
+    "expected_tools": ["think"]
+  },
+
+  {
+    "id": "multi-001",
+    "query": "What is the population of the capital of France?",
+    "category": "multi_tool",
+    "difficulty": "medium",
+    "expected_answer": "2.1 million",
+    "expected_tools": ["web_search", "think"]
+  },
+  {
+    "id": "multi-002",
+    "query": "Calculate 15% tip on a $85 dinner bill and tell me what that amount could buy in Japanese yen",
+    "category": "multi_tool",
+    "difficulty": "hard",
+    "expected_answer": "12.75",
+    "expected_tools": ["calculator", "web_search"]
+  },
+  {
+    "id": "multi-003",
+    "query": "What is the square of the number of planets in our solar system?",
+    "category": "multi_tool",
+    "difficulty": "medium",
+    "expected_answer": "64",
+    "expected_tools": ["web_search", "calculator"]
+  },
+  {
+    "id": "multi-004",
+    "query": "How many days are between the founding dates of Google (1998) and Facebook (2004)?",
+    "category": "multi_tool",
+    "difficulty": "medium",
+    "expected_answer": "2192",
+    "expected_tools": ["web_search", "calculator"]
+  },
+  {
+    "id": "multi-005",
+    "query": "If the Earth's diameter is about 12742 km, what is its circumference?",
+    "category": "multi_tool",
+    "difficulty": "medium",
+    "expected_answer": "40030",
+    "expected_tools": ["calculator", "think"]
+  },
+  {
+    "id": "multi-006",
+    "query": "What percentage of the world's population lives in the most populous country?",
+    "category": "multi_tool",
+    "difficulty": "hard",
+    "expected_answer": "17.5%",
+    "expected_tools": ["web_search", "calculator"]
+  },
+  {
+    "id": "multi-007",
+    "query": "Calculate the speed of light in miles per second given it travels at 299792458 meters per second",
+    "category": "multi_tool",
+    "difficulty": "medium",
+    "expected_answer": "186282",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "multi-008",
+    "query": "What is the GDP per capita of Japan if its GDP is $4.2 trillion and population is 125 million?",
+    "category": "multi_tool",
+    "difficulty": "medium",
+    "expected_answer": "33600",
+    "expected_tools": ["calculator", "web_search"]
+  },
+  {
+    "id": "multi-009",
+    "query": "How many Olympic gold medals has the US won total, and what is that divided by the number of Summer Olympics they have participated in?",
+    "category": "multi_tool",
+    "difficulty": "hard",
+    "expected_answer": "1000+",
+    "expected_tools": ["web_search", "calculator"]
+  },
+  {
+    "id": "multi-010",
+    "query": "If I invest the average US minimum wage ($7.25/hr) for 40 hours a week, 52 weeks a year, at 5% annual interest for 10 years, how much would I have?",
+    "category": "multi_tool",
+    "difficulty": "hard",
+    "expected_answer": "15080",
+    "expected_tools": ["calculator", "think"]
+  },
+
+  {
+    "id": "edge-001",
+    "query": "What is the color of happiness?",
+    "category": "edge_cases",
+    "difficulty": "easy",
+    "expected_answer": "subjective",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "edge-002",
+    "query": "Divide 10 by 0",
+    "category": "edge_cases",
+    "difficulty": "easy",
+    "expected_answer": "undefined",
+    "expected_tools": ["calculator"]
+  },
+  {
+    "id": "edge-003",
+    "query": "",
+    "category": "edge_cases",
+    "difficulty": "easy",
+    "expected_answer": "empty query",
+    "expected_tools": []
+  },
+  {
+    "id": "edge-004",
+    "query": "What will the stock market do tomorrow?",
+    "category": "edge_cases",
+    "difficulty": "medium",
+    "expected_answer": "cannot predict",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "edge-005",
+    "query": "Tell me everything about everything",
+    "category": "edge_cases",
+    "difficulty": "hard",
+    "expected_answer": "too broad",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "edge-006",
+    "query": "Use the nonexistent_tool to do something",
+    "category": "edge_cases",
+    "difficulty": "medium",
+    "expected_answer": "tool not available",
+    "expected_tools": []
+  },
+  {
+    "id": "edge-007",
+    "query": "What is 1+1? Do not use any tools.",
+    "category": "edge_cases",
+    "difficulty": "easy",
+    "expected_answer": "2",
+    "expected_tools": []
+  },
+  {
+    "id": "edge-008",
+    "query": "Repeat the word 'hello' exactly 3 times",
+    "category": "edge_cases",
+    "difficulty": "easy",
+    "expected_answer": "hello hello hello",
+    "expected_tools": []
+  },
+  {
+    "id": "edge-009",
+    "query": "What is the answer to life, the universe, and everything?",
+    "category": "edge_cases",
+    "difficulty": "easy",
+    "expected_answer": "42",
+    "expected_tools": ["think"]
+  },
+  {
+    "id": "edge-010",
+    "query": "If this sentence is false, is it true or false?",
+    "category": "edge_cases",
+    "difficulty": "hard",
+    "expected_answer": "paradox",
+    "expected_tools": ["think"]
+  }
+]
