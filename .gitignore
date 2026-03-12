@@ -33,5 +33,10 @@ node_modules/
 .next/
 out/
 
+# Coverage
+.coverage
+htmlcov/
+coverage.xml
+
 # Project
 workspace/
