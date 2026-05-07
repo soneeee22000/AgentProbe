@@ -2,7 +2,7 @@
 
 **A from-scratch ReAct Agent Observatory** — observe, debug, and benchmark LLM agents with a built-in failure taxonomy, cross-model comparison, and production-grade evaluation harness.
 
-[![CI](https://github.com/pyaesone/agentprobe/actions/workflows/ci.yml/badge.svg)](https://github.com/pyaesone/agentprobe/actions)
+[![CI](https://github.com/soneeee22000/AgentProbe/actions/workflows/ci.yml/badge.svg)](https://github.com/soneeee22000/AgentProbe/actions)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776ab.svg)
 ![TypeScript](https://img.shields.io/badge/typescript-strict-3178c6.svg)
 ![Next.js 16](https://img.shields.io/badge/next.js-16-000000.svg)
@@ -234,8 +234,8 @@ graph LR
 
 ```bash
 # Clone and configure
-git clone https://github.com/pyaesone/agentprobe.git
-cd agentprobe
+git clone https://github.com/soneeee22000/AgentProbe.git
+cd AgentProbe
 
 # Set API keys
 cat > .env << EOF
