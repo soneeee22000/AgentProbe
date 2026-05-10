@@ -24,15 +24,20 @@ class ProviderInfo(BaseModel):
     models: list[ProviderModel] = Field(default_factory=list)
 
 
+# Catalog updated 2026-05-10 against the live provider APIs. IDs that
+# return 404 / "model_decommissioned" have been removed. When adding a
+# new model, run a quick probe against /api/v1/run before listing it
+# here — every dropdown entry is a contract with the user.
 _PROVIDER_CATALOG: list[dict] = [
     {
         "name": "groq",
         "display_name": "Groq",
         "key_field": "groq_api_key",
         "models": [
+            # mixtral-8x7b-32768 was decommissioned by Groq in 2026.
+            # llama-3.1-70b-versatile was superseded by 3.3-70b-versatile.
+            {"id": "llama-3.3-70b-versatile", "name": "Llama 3.3 70B Versatile"},
             {"id": "llama-3.1-8b-instant", "name": "Llama 3.1 8B Instant"},
-            {"id": "llama-3.1-70b-versatile", "name": "Llama 3.1 70B Versatile"},
-            {"id": "mixtral-8x7b-32768", "name": "Mixtral 8x7B"},
             {"id": "gemma2-9b-it", "name": "Gemma 2 9B IT"},
         ],
     },
@@ -61,8 +66,11 @@ _PROVIDER_CATALOG: list[dict] = [
         "display_name": "Anthropic",
         "key_field": "anthropic_api_key",
         "models": [
-            {"id": "claude-sonnet-4-20250514", "name": "Claude Sonnet 4"},
-            {"id": "claude-haiku-4-20250414", "name": "Claude Haiku 4"},
+            # Previous catalog used claude-sonnet-4-20250514 / claude-haiku-4-20250414
+            # which Anthropic no longer routes. Current generation is 4.5/4.6/4.7.
+            {"id": "claude-opus-4-7", "name": "Claude Opus 4.7"},
+            {"id": "claude-sonnet-4-6", "name": "Claude Sonnet 4.6"},
+            {"id": "claude-haiku-4-5-20251001", "name": "Claude Haiku 4.5"},
         ],
     },
     {
@@ -70,8 +78,10 @@ _PROVIDER_CATALOG: list[dict] = [
         "display_name": "Google",
         "key_field": "google_api_key",
         "models": [
-            {"id": "gemini-2.0-flash", "name": "Gemini 2.0 Flash"},
-            {"id": "gemini-2.0-flash-lite", "name": "Gemini 2.0 Flash Lite"},
+            # gemini-2.0-flash and gemini-2.0-flash-lite return 404 ("no
+            # longer available to new users") as of 2026-05.
+            {"id": "gemini-2.5-flash", "name": "Gemini 2.5 Flash"},
+            {"id": "gemini-2.5-flash-lite", "name": "Gemini 2.5 Flash Lite"},
         ],
     },
 ]
@@ -95,10 +105,7 @@ async def list_providers() -> list[ProviderInfo]:
                 name=catalog_entry["name"],
                 display_name=catalog_entry["display_name"],
                 available=available,
-                models=[
-                    ProviderModel(id=m["id"], name=m["name"])
-                    for m in catalog_entry["models"]
-                ],
+                models=[ProviderModel(id=m["id"], name=m["name"]) for m in catalog_entry["models"]],
             )
         )
 
