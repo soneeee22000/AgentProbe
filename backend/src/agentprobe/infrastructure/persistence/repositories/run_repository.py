@@ -57,9 +57,10 @@ class SQLAlchemyRunRepository(IRunRepository):
                     total_tokens=run.total_tokens,
                     duration_ms=run.duration_ms,
                     succeeded=run.succeeded,
+                    # naive-UTC by convention (see tables._utc_naive_now docstring)
                     created_at=datetime.fromtimestamp(
                         run.start_time, tz=timezone.utc
-                    ),
+                    ).replace(tzinfo=None),
                 )
 
                 for step in run.steps:

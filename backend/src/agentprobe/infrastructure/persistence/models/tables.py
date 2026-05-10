@@ -19,6 +19,18 @@ from sqlalchemy.orm import (
 )
 
 
+def _utc_naive_now() -> datetime:
+    """Return the current UTC instant as a naive datetime.
+
+    Every timestamp column on this schema is ``TIMESTAMP WITHOUT TIME ZONE``
+    (the SQLAlchemy ``DateTime`` default). Postgres + asyncpg refuse to
+    coerce a tz-aware value into that column type — SQLite tolerated it,
+    Postgres won't. We standardise on naive-UTC by convention and strip
+    tzinfo at the boundary so the same code works on both engines.
+    """
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
 class Base(DeclarativeBase):
     """Declarative base for all AgentProbe ORM models."""
 
@@ -34,7 +46,7 @@ class UserModel(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-        default=lambda: datetime.now(timezone.utc),
+        default=_utc_naive_now,
     )
 
     api_keys: Mapped[list["ApiKeyModel"]] = relationship(
@@ -61,7 +73,7 @@ class ApiKeyModel(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-        default=lambda: datetime.now(timezone.utc),
+        default=_utc_naive_now,
     )
 
     user: Mapped["UserModel"] = relationship("UserModel", back_populates="api_keys")
@@ -95,7 +107,7 @@ class RunModel(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-        default=lambda: datetime.now(timezone.utc),
+        default=_utc_naive_now,
     )
 
     steps: Mapped[list["StepModel"]] = relationship(
@@ -194,7 +206,7 @@ class CustomToolModel(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-        default=lambda: datetime.now(timezone.utc),
+        default=_utc_naive_now,
     )
 
     def __repr__(self) -> str:
@@ -217,7 +229,7 @@ class PromptTemplateModel(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-        default=lambda: datetime.now(timezone.utc),
+        default=_utc_naive_now,
     )
 
     def __repr__(self) -> str:
@@ -240,7 +252,7 @@ class MemoryEntryModel(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-        default=lambda: datetime.now(timezone.utc),
+        default=_utc_naive_now,
     )
 
     def __repr__(self) -> str:
@@ -298,7 +310,7 @@ class BenchmarkSuiteModel(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-        default=lambda: datetime.now(timezone.utc),
+        default=_utc_naive_now,
     )
 
     results: Mapped[list["BenchmarkResultModel"]] = relationship(
