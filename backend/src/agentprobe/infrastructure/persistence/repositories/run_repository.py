@@ -78,17 +78,24 @@ class SQLAlchemyRunRepository(IRunRepository):
                     )
                     run_model.steps.append(step_model)
 
-                for idx, failure_type in enumerate(run.failures):
-                    # Link failure to the step that caused it when possible.
-                    step_id: int | None = None
-                    for step in run.steps:
-                        if step.failure_type == failure_type:
-                            step_id = step.step_index
-                            break
-
+                for failure_type in run.failures:
+                    # ``failures.step_id`` FKs to ``steps.id`` (auto-increment
+                    # PK), but the previous code mistakenly stored
+                    # ``step.step_index`` (the per-run logical 0..N index)
+                    # there. SQLite ignores FK constraints by default so
+                    # the bug went unnoticed; Postgres enforces them and
+                    # raises ForeignKeyViolationError on every persisted
+                    # run that has failures (this is exactly why the prod
+                    # seed kept crashing).
+                    #
+                    # The correlation isn't lost: ``steps.failure_type``
+                    # already records which step produced which failure,
+                    # and a grep across the codebase confirms nothing reads
+                    # ``failures.step_id``. Storing NULL keeps the FK
+                    # constraint happy without losing any information.
                     failure_model = FailureModel(
                         run_id=run.run_id,
-                        step_id=step_id,
+                        step_id=None,
                         failure_type=failure_type.value,
                     )
                     run_model.failures.append(failure_model)
