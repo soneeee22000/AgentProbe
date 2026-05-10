@@ -22,6 +22,7 @@ COPY main.py ./
 COPY alembic.ini ./
 COPY alembic/ ./alembic/
 COPY scripts/ ./scripts/
+COPY data/ ./data/
 
 # Workspace directory for the read_file tool.
 RUN mkdir -p /app/workspace
