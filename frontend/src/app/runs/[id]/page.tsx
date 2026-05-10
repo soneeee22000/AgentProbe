@@ -57,7 +57,14 @@ export default function RunDetailPage() {
     <div className="flex h-screen">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header />
+        <Header
+          showLiveStatus={false}
+          context={
+            run
+              ? { label: "Run model", value: run.model }
+              : { label: "Run", value: runId }
+          }
+        />
         <main className="flex flex-1 flex-col overflow-hidden p-6">
           {/* Back button */}
           <Button
@@ -80,10 +87,37 @@ export default function RunDetailPage() {
               </div>
             </div>
           ) : isError || !run ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <p className="text-sm text-destructive">
-                Run not found or failed to load.
-              </p>
+            <div className="flex flex-1 flex-col items-center justify-center gap-4 rounded-md border border-border bg-card p-12 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+                <span className="text-2xl text-destructive">!</span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-base font-semibold text-foreground">
+                  Run not found
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  No run with ID{" "}
+                  <span className="font-mono text-foreground">{runId}</span>{" "}
+                  exists. It may have been deleted, or the backend isn&apos;t
+                  reachable.
+                </p>
+              </div>
+              <div className="mt-2 flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push("/runs")}
+                >
+                  Back to Runs
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => router.push("/")}
+                >
+                  Go to Playground
+                </Button>
+              </div>
             </div>
           ) : (
             <>
@@ -175,8 +209,9 @@ export default function RunDetailPage() {
                 </ScrollArea>
               )}
 
-              {/* Final answer */}
-              {run.final_answer && !replaying && (
+              {/* Final answer — shown beneath the list view (graph view already
+                  renders the Decision node, so we don't double up). */}
+              {run.final_answer && !replaying && view === "list" && (
                 <div className="mt-3 rounded-md border border-[#ce93d8]/30 bg-[#ce93d8]/5 p-4">
                   <p className="text-xs font-medium text-[#ce93d8]">
                     Final Answer
