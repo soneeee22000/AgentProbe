@@ -8,11 +8,14 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { StepCard } from "@/components/playground/step-card";
 import { ExportRunButton } from "@/components/runs/export-run-button";
+import { DecisionGraph } from "@/components/runs/decision-graph";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { fetchRun, replayRun, type AgentStep } from "@/lib/api";
+
+type ViewMode = "graph" | "list";
 
 /**
  * Run Detail page — view the full step-by-step trace of a single run.
@@ -25,6 +28,7 @@ export default function RunDetailPage() {
 
   const [replaying, setReplaying] = useState(false);
   const [replaySteps, setReplaySteps] = useState<AgentStep[]>([]);
+  const [view, setView] = useState<ViewMode>("graph");
 
   const {
     data: run,
@@ -120,7 +124,25 @@ export default function RunDetailPage() {
                       </div>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex overflow-hidden rounded-md border border-border">
+                      <Button
+                        variant={view === "graph" ? "default" : "ghost"}
+                        size="sm"
+                        className="h-8 rounded-none px-3 text-xs"
+                        onClick={() => setView("graph")}
+                      >
+                        Graph
+                      </Button>
+                      <Button
+                        variant={view === "list" ? "default" : "ghost"}
+                        size="sm"
+                        className="h-8 rounded-none px-3 text-xs"
+                        onClick={() => setView("list")}
+                      >
+                        List
+                      </Button>
+                    </div>
                     <ExportRunButton runId={runId} />
                     <Button
                       variant="outline"
@@ -134,14 +156,24 @@ export default function RunDetailPage() {
                 </div>
               </div>
 
-              {/* Step trace */}
-              <ScrollArea className="flex-1 rounded-md border border-border bg-card p-4">
-                <div className="space-y-2">
-                  {displaySteps.map((step, i) => (
-                    <StepCard key={i} step={step} />
-                  ))}
+              {/* Step trace — graph or list view */}
+              {view === "graph" ? (
+                <div className="flex-1 overflow-hidden">
+                  <DecisionGraph
+                    steps={displaySteps}
+                    finalAnswer={run.final_answer}
+                    query={run.query}
+                  />
                 </div>
-              </ScrollArea>
+              ) : (
+                <ScrollArea className="flex-1 rounded-md border border-border bg-card p-4">
+                  <div className="space-y-2">
+                    {displaySteps.map((step, i) => (
+                      <StepCard key={i} step={step} />
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
 
               {/* Final answer */}
               {run.final_answer && !replaying && (
