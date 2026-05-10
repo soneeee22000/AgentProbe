@@ -3,10 +3,9 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Just uvicorn — tables are created via the FastAPI lifespan
-# (Base.metadata.create_all). Run migrations + seed manually after the
-# initial deploy (railway run python -m scripts.seed_demo_runs).
-startCommand = "sh -c 'uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}'"
+# Run migrations + seed (idempotent, controlled by SEED_DEMO_ON_STARTUP)
+# before the API boots. Wrapped in sh -c so the shell expands $PORT.
+startCommand = "sh -c 'alembic upgrade head && python -m scripts.maybe_seed && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}'"
 healthcheckPath = "/api/v1/health"
 healthcheckTimeout = 120
 restartPolicyType = "on_failure"
