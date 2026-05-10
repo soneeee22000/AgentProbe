@@ -28,6 +28,7 @@ RUN mkdir -p /app/workspace
 
 EXPOSE 8000
 
-# Railway/Procfile override the CMD with `alembic upgrade head && uvicorn ...`.
-# The default below keeps `docker run` usable for local image checks.
-CMD ["sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Just uvicorn — table creation happens via the FastAPI lifespan
+# (Base.metadata.create_all). Run migrations and seed manually after first
+# deploy if needed: `railway run python -m scripts.seed_demo_runs`.
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
