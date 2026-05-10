@@ -210,6 +210,7 @@ function buildGraph(
 
     if (row.final) {
       const id = `final-${row.rowIdx}`;
+      const isFailure = row.final.failure_type !== "none";
       nodes.push({
         id,
         x: COL_X.final,
@@ -217,11 +218,12 @@ function buildGraph(
         type: "final",
         label: NODE_LABELS.final,
         detail: row.final.content || finalAnswer || "(no final answer)",
+        failureType: isFailure ? row.final.failure_type : undefined,
         latencyMs: row.final.latency_ms,
         tokenCount: row.final.token_count,
         stepIndex: row.final.step_index,
       });
-      if (prevId) edges.push({ from: prevId, to: id });
+      if (prevId) edges.push({ from: prevId, to: id, failed: isFailure });
     }
   });
 
