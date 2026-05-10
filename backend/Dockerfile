@@ -2,25 +2,32 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install system dependencies
+# System deps (gcc for any C-extension wheels that aren't prebuilt).
 RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy dependency files
+# Dependency manifests first so the install layer caches across code edits.
 COPY pyproject.toml ./
 COPY requirements.txt ./
 
-# Install Python dependencies
+# Source layout has to exist before `pip install -e .` resolves the package.
+COPY src/ ./src/
+
 RUN pip install --no-cache-dir -e .
 
-# Copy source code
-COPY src/ ./src/
+# Application code, migrations, and demo seed scripts. alembic.ini and
+# alembic/ are required for the start-up `alembic upgrade head` to succeed.
 COPY main.py ./
+COPY alembic.ini ./
+COPY alembic/ ./alembic/
+COPY scripts/ ./scripts/
 
-# Create workspace directory for read_file tool
+# Workspace directory for the read_file tool.
 RUN mkdir -p /app/workspace
 
 EXPOSE 8000
 
-CMD ["uvicorn", "agentprobe.infrastructure.api.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+# Railway/Procfile override the CMD with `alembic upgrade head && uvicorn ...`.
+# The default below keeps `docker run` usable for local image checks.
+CMD ["sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
