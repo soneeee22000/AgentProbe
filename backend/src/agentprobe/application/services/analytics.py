@@ -10,9 +10,7 @@ class AnalyticsService:
         session_factory: Async session factory for direct SQL queries.
     """
 
-    def __init__(
-        self, session_factory: async_sessionmaker[AsyncSession]
-    ) -> None:
+    def __init__(self, session_factory: async_sessionmaker[AsyncSession]) -> None:
         self._session_factory = session_factory
 
     async def get_failure_analytics(self) -> dict:
@@ -45,13 +43,14 @@ class AnalyticsService:
             )
             model_rows = by_model.fetchall()
 
-            total_runs_result = await session.execute(
-                text("SELECT COUNT(*) FROM runs")
-            )
+            total_runs_result = await session.execute(text("SELECT COUNT(*) FROM runs"))
             total_runs = total_runs_result.scalar_one()
 
+            # `succeeded` is BOOLEAN. SQLite stores booleans as INTEGER and
+            # tolerates `succeeded = 0`, but Postgres rejects with
+            # `operator does not exist: boolean = integer`. Use SQL false.
             failed_runs_result = await session.execute(
-                text("SELECT COUNT(*) FROM runs WHERE succeeded = 0")
+                text("SELECT COUNT(*) FROM runs WHERE succeeded = false")
             )
             failed_runs = failed_runs_result.scalar_one()
 
@@ -67,11 +66,7 @@ class AnalyticsService:
         return {
             "total_runs": total_runs,
             "failed_runs": failed_runs,
-            "failure_rate": (
-                round(failed_runs / total_runs, 3)
-                if total_runs > 0
-                else 0.0
-            ),
+            "failure_rate": (round(failed_runs / total_runs, 3) if total_runs > 0 else 0.0),
             "by_type": by_type_dict,
             "by_model": model_failures,
         }
@@ -90,7 +85,9 @@ class AnalyticsService:
                     "SELECT "
                     "  model_id, "
                     "  COUNT(*) as total_runs, "
-                    "  SUM(CASE WHEN succeeded = 1 THEN 1 ELSE 0 END) as successes, "
+                    # See note in get_failure_analytics — Postgres requires
+                    # boolean literal, not integer.
+                    "  SUM(CASE WHEN succeeded = true THEN 1 ELSE 0 END) as successes, "
                     "  AVG(duration_ms) as avg_duration_ms, "
                     "  AVG(total_tokens) as avg_tokens "
                     "FROM runs "
@@ -125,11 +122,7 @@ class AnalyticsService:
                 "success_rate": round(successes / total, 3) if total > 0 else 0.0,
                 "avg_duration_ms": round(row[3], 1) if row[3] else None,
                 "avg_tokens": round(row[4], 1) if row[4] else None,
-                "avg_steps": (
-                    round(step_rows[model_id], 1)
-                    if model_id in step_rows
-                    else None
-                ),
+                "avg_steps": (round(step_rows[model_id], 1) if model_id in step_rows else None),
             }
 
         return {"models": models}
