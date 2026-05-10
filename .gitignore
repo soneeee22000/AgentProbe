@@ -41,3 +41,10 @@ workspace/
 .coverage.*
 htmlcov/
 .pytest_cache/
+
+# AI tooling artifacts (never push)
+.claude/
+.sixth/
+.codex/
+.cursor/
+.aider*
