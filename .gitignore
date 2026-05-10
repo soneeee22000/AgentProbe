@@ -35,3 +35,9 @@ out/
 
 # Project
 workspace/
+
+# Test artifacts
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
