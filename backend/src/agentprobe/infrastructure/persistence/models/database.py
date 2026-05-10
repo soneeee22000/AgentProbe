@@ -15,6 +15,24 @@ def _is_sqlite(url: str) -> bool:
     return url.startswith("sqlite")
 
 
+def _normalize_postgres_url(url: str) -> str:
+    """Coerce sync Postgres URLs into the asyncpg dialect we use.
+
+    Hosted providers (Railway, Render, Heroku) hand out connection strings
+    like ``postgresql://...`` or ``postgres://...`` — both of which would
+    select SQLAlchemy's sync psycopg2 dialect and fail under our async
+    engine.  Rewriting the prefix is the cheapest way to keep the env var
+    untouched while still using ``asyncpg`` underneath.
+    """
+    if url.startswith("postgresql+"):
+        return url
+    if url.startswith("postgresql://"):
+        return "postgresql+asyncpg://" + url[len("postgresql://") :]
+    if url.startswith("postgres://"):
+        return "postgresql+asyncpg://" + url[len("postgres://") :]
+    return url
+
+
 def get_engine(
     database_url: str = DEFAULT_DATABASE_URL,
     pool_size: int = 5,
@@ -36,13 +54,15 @@ def get_engine(
         "future": True,
     }
 
-    if _is_sqlite(database_url):
+    normalized = _normalize_postgres_url(database_url)
+
+    if _is_sqlite(normalized):
         kwargs["connect_args"] = {"check_same_thread": False}
     else:
         kwargs["pool_size"] = pool_size
         kwargs["max_overflow"] = max_overflow
 
-    return create_async_engine(database_url, **kwargs)
+    return create_async_engine(normalized, **kwargs)
 
 
 def get_session_factory(
