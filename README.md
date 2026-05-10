@@ -8,6 +8,8 @@ Most agent demos work. Most agent deployments don't. AgentProbe is a from-scratc
 
 _Above: a single agent run rendered as a decision graph. The red dashed edge marks the deterministic detection of `hallucinated_tool` — the agent invoked `weather_forecast`, the registry rejected it, the run continued and silently drifted into a `goal_drift` final answer about the weather instead of the population that was asked for. Both failures appear as red badges; both are reproducible from the seeded demo run at `/runs/demo-fail-001`._
 
+**Live demo:** [agent-probe-one.vercel.app/runs/demo-fail-001](https://agent-probe-one.vercel.app/runs/demo-fail-001) · [demo-happy-001](https://agent-probe-one.vercel.app/runs/demo-happy-001) · [API health](https://agentprobe-production-0e0b.up.railway.app/api/v1/health)
+
 [![CI](https://github.com/soneeee22000/AgentProbe/actions/workflows/ci.yml/badge.svg)](https://github.com/soneeee22000/AgentProbe/actions)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776ab.svg)
 ![TypeScript](https://img.shields.io/badge/typescript-strict-3178c6.svg)
