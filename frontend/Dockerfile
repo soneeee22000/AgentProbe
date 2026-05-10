@@ -3,7 +3,11 @@ FROM node:20-alpine AS deps
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm ci
+# `npm install` (not `npm ci`) — package-lock.json drifts from package.json
+# whenever a devDep is added without re-running install (e.g. @playwright/test
+# was added to package.json without a lockfile sync). PR #5 made the same
+# fix for Vercel's installCommand. `npm ci` would refuse to install at all.
+RUN npm install --no-audit --no-fund
 
 # ---
 
