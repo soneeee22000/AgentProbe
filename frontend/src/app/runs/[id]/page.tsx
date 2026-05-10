@@ -132,12 +132,32 @@ export default function RunDetailPage() {
                       <span className="font-mono">{run.run_id}</span>
                       <span>{run.model}</span>
                       <span>{run.provider}</span>
-                      <Badge
-                        variant={run.succeeded ? "default" : "destructive"}
-                        className="text-xs"
-                      >
-                        {run.succeeded ? "Success" : "Failed"}
-                      </Badge>
+                      {(() => {
+                        const failureCount = run.failures.length;
+                        if (!run.succeeded) {
+                          return (
+                            <Badge variant="destructive" className="text-xs">
+                              Failed
+                            </Badge>
+                          );
+                        }
+                        if (failureCount > 0) {
+                          return (
+                            <Badge
+                              className="border border-[#ffb74d]/40 bg-[#ffb74d]/10 text-xs text-[#ffb74d]"
+                              variant="outline"
+                            >
+                              Completed · {failureCount} issue
+                              {failureCount > 1 ? "s" : ""}
+                            </Badge>
+                          );
+                        }
+                        return (
+                          <Badge className="text-xs" variant="default">
+                            Success
+                          </Badge>
+                        );
+                      })()}
                       {run.duration_ms && (
                         <span>{run.duration_ms.toFixed(0)}ms</span>
                       )}

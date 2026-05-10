@@ -60,19 +60,19 @@ const NODE_LABELS: Record<GraphNode["type"], string> = {
 };
 
 const COL_X: Record<GraphNode["type"], number> = {
-  query: 60,
-  thought: 240,
-  action: 460,
-  observation: 680,
-  final: 900,
-  error: 460,
-  system: 60,
+  query: 40,
+  thought: 220,
+  action: 420,
+  observation: 620,
+  final: 820,
+  error: 420,
+  system: 40,
 };
 
-const NODE_WIDTH = 180;
+const NODE_WIDTH = 170;
 const NODE_HEIGHT = 64;
-const ROW_GAP = 110;
-const TOP_PAD = 40;
+const ROW_GAP = 100;
+const TOP_PAD = 32;
 
 function buildGraph(
   steps: AgentStep[],
@@ -258,18 +258,39 @@ function buildGraph(
 }
 
 /**
- * Compute a smooth cubic-bezier path between two node anchor points.
- * Anchors are right-edge of the source and left-edge of the target.
+ * Smooth cubic-bezier path between two node anchors.
+ *
+ * Two routing modes so backward links between rows don't loop with
+ * negative control points:
+ *   - Forward (target is to the right): exit right edge of source,
+ *     enter left edge of target. Symmetric horizontal cubic.
+ *   - Backward (target is to the left, e.g. the last node of one
+ *     ReAct cycle feeding the first node of the next): exit the
+ *     bottom of the source, enter the left of the target. The cubic
+ *     stays inside the canvas.
  */
 function edgePath(from: GraphNode, to: GraphNode): string {
-  const x1 = from.x + NODE_WIDTH;
-  const y1 = from.y + NODE_HEIGHT / 2;
-  const x2 = to.x;
-  const y2 = to.y + NODE_HEIGHT / 2;
-  const dx = Math.abs(x2 - x1);
-  const cx1 = x1 + dx * 0.5;
-  const cx2 = x2 - dx * 0.5;
-  return `M ${x1} ${y1} C ${cx1} ${y1}, ${cx2} ${y2}, ${x2} ${y2}`;
+  const sourceRight = from.x + NODE_WIDTH;
+  const sourceMidY = from.y + NODE_HEIGHT / 2;
+  const targetLeft = to.x;
+  const targetMidY = to.y + NODE_HEIGHT / 2;
+
+  if (targetLeft >= sourceRight) {
+    // Forward: standard horizontal cubic.
+    const dx = targetLeft - sourceRight;
+    const cx1 = sourceRight + dx * 0.5;
+    const cx2 = targetLeft - dx * 0.5;
+    return `M ${sourceRight} ${sourceMidY} C ${cx1} ${sourceMidY}, ${cx2} ${targetMidY}, ${targetLeft} ${targetMidY}`;
+  }
+
+  // Backward: exit from bottom of source, curve down-and-left into
+  // the left edge of target.
+  const sourceBottomX = from.x + NODE_WIDTH / 2;
+  const sourceBottomY = from.y + NODE_HEIGHT;
+  const dy = targetMidY - sourceBottomY;
+  const cy1 = sourceBottomY + dy * 0.6;
+  const cx2 = Math.max(targetLeft - 60, 0);
+  return `M ${sourceBottomX} ${sourceBottomY} C ${sourceBottomX} ${cy1}, ${cx2} ${targetMidY}, ${targetLeft} ${targetMidY}`;
 }
 
 function truncate(s: string, n: number): string {
@@ -459,7 +480,7 @@ export function DecisionGraph({
       </div>
 
       {/* Side detail panel */}
-      <div className="hidden w-[280px] flex-col gap-2 rounded-md border border-border bg-card p-4 lg:flex">
+      <div className="hidden w-[260px] flex-col gap-2 rounded-md border border-border bg-card p-4 lg:flex">
         {selected ? (
           <>
             <div className="flex items-center justify-between">

@@ -4,6 +4,10 @@
 
 Most agent demos work. Most agent deployments don't. AgentProbe is a from-scratch ReAct loop — parser, dispatcher, failure detector, streaming layer, all auditable — instrumented with an 8-category failure taxonomy and a decision graph view that turns every run into reproducible diagnostic data.
 
+![Decision Graph view of a failed agent run](docs/screenshots/decision-graph-fail.svg)
+
+_Above: a single agent run rendered as a decision graph. The red dashed edge marks the deterministic detection of `hallucinated_tool` — the agent invoked `weather_forecast`, the registry rejected it, the run continued and silently drifted into a `goal_drift` final answer about the weather instead of the population that was asked for. Both failures appear as red badges; both are reproducible from the seeded demo run at `/runs/demo-fail-001`._
+
 [![CI](https://github.com/soneeee22000/AgentProbe/actions/workflows/ci.yml/badge.svg)](https://github.com/soneeee22000/AgentProbe/actions)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776ab.svg)
 ![TypeScript](https://img.shields.io/badge/typescript-strict-3178c6.svg)
