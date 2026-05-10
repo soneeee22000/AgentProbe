@@ -17,10 +17,26 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
+def _normalize_url(url: str) -> str:
+    """Coerce hosted Postgres URLs (Railway/Render/Heroku) to the asyncpg dialect.
+
+    Hosted providers hand out ``postgresql://`` or ``postgres://`` URLs which
+    select the sync psycopg2 dialect and crash here because the Docker image
+    only ships ``asyncpg``.
+    """
+    if url.startswith("postgresql+"):
+        return url
+    if url.startswith("postgresql://"):
+        return "postgresql+asyncpg://" + url[len("postgresql://") :]
+    if url.startswith("postgres://"):
+        return "postgresql+asyncpg://" + url[len("postgres://") :]
+    return url
+
+
 # Override URL from environment if available
 database_url = os.environ.get("DATABASE_URL")
 if database_url:
-    config.set_main_option("sqlalchemy.url", database_url)
+    config.set_main_option("sqlalchemy.url", _normalize_url(database_url))
 
 
 def run_migrations_offline() -> None:
