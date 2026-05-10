@@ -8,11 +8,14 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { StepCard } from "@/components/playground/step-card";
 import { ExportRunButton } from "@/components/runs/export-run-button";
+import { DecisionGraph } from "@/components/runs/decision-graph";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { fetchRun, replayRun, type AgentStep } from "@/lib/api";
+
+type ViewMode = "graph" | "list";
 
 /**
  * Run Detail page — view the full step-by-step trace of a single run.
@@ -25,6 +28,7 @@ export default function RunDetailPage() {
 
   const [replaying, setReplaying] = useState(false);
   const [replaySteps, setReplaySteps] = useState<AgentStep[]>([]);
+  const [view, setView] = useState<ViewMode>("graph");
 
   const {
     data: run,
@@ -53,7 +57,14 @@ export default function RunDetailPage() {
     <div className="flex h-screen">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header />
+        <Header
+          showLiveStatus={false}
+          context={
+            run
+              ? { label: "Run model", value: run.model }
+              : { label: "Run", value: runId }
+          }
+        />
         <main className="flex flex-1 flex-col overflow-hidden p-6">
           {/* Back button */}
           <Button
@@ -76,10 +87,37 @@ export default function RunDetailPage() {
               </div>
             </div>
           ) : isError || !run ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <p className="text-sm text-destructive">
-                Run not found or failed to load.
-              </p>
+            <div className="flex flex-1 flex-col items-center justify-center gap-4 rounded-md border border-border bg-card p-12 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+                <span className="text-2xl text-destructive">!</span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-base font-semibold text-foreground">
+                  Run not found
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  No run with ID{" "}
+                  <span className="font-mono text-foreground">{runId}</span>{" "}
+                  exists. It may have been deleted, or the backend isn&apos;t
+                  reachable.
+                </p>
+              </div>
+              <div className="mt-2 flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push("/runs")}
+                >
+                  Back to Runs
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => router.push("/")}
+                >
+                  Go to Playground
+                </Button>
+              </div>
             </div>
           ) : (
             <>
@@ -94,12 +132,32 @@ export default function RunDetailPage() {
                       <span className="font-mono">{run.run_id}</span>
                       <span>{run.model}</span>
                       <span>{run.provider}</span>
-                      <Badge
-                        variant={run.succeeded ? "default" : "destructive"}
-                        className="text-xs"
-                      >
-                        {run.succeeded ? "Success" : "Failed"}
-                      </Badge>
+                      {(() => {
+                        const failureCount = run.failures.length;
+                        if (!run.succeeded) {
+                          return (
+                            <Badge variant="destructive" className="text-xs">
+                              Failed
+                            </Badge>
+                          );
+                        }
+                        if (failureCount > 0) {
+                          return (
+                            <Badge
+                              className="border border-[#ffb74d]/40 bg-[#ffb74d]/10 text-xs text-[#ffb74d]"
+                              variant="outline"
+                            >
+                              Completed · {failureCount} issue
+                              {failureCount > 1 ? "s" : ""}
+                            </Badge>
+                          );
+                        }
+                        return (
+                          <Badge className="text-xs" variant="default">
+                            Success
+                          </Badge>
+                        );
+                      })()}
                       {run.duration_ms && (
                         <span>{run.duration_ms.toFixed(0)}ms</span>
                       )}
@@ -120,7 +178,25 @@ export default function RunDetailPage() {
                       </div>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex overflow-hidden rounded-md border border-border">
+                      <Button
+                        variant={view === "graph" ? "default" : "ghost"}
+                        size="sm"
+                        className="h-8 rounded-none px-3 text-xs"
+                        onClick={() => setView("graph")}
+                      >
+                        Graph
+                      </Button>
+                      <Button
+                        variant={view === "list" ? "default" : "ghost"}
+                        size="sm"
+                        className="h-8 rounded-none px-3 text-xs"
+                        onClick={() => setView("list")}
+                      >
+                        List
+                      </Button>
+                    </div>
                     <ExportRunButton runId={runId} />
                     <Button
                       variant="outline"
@@ -134,17 +210,28 @@ export default function RunDetailPage() {
                 </div>
               </div>
 
-              {/* Step trace */}
-              <ScrollArea className="flex-1 rounded-md border border-border bg-card p-4">
-                <div className="space-y-2">
-                  {displaySteps.map((step, i) => (
-                    <StepCard key={i} step={step} />
-                  ))}
+              {/* Step trace — graph or list view */}
+              {view === "graph" ? (
+                <div className="flex-1 overflow-hidden">
+                  <DecisionGraph
+                    steps={displaySteps}
+                    finalAnswer={run.final_answer}
+                    query={run.query}
+                  />
                 </div>
-              </ScrollArea>
+              ) : (
+                <ScrollArea className="flex-1 rounded-md border border-border bg-card p-4">
+                  <div className="space-y-2">
+                    {displaySteps.map((step, i) => (
+                      <StepCard key={i} step={step} />
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
 
-              {/* Final answer */}
-              {run.final_answer && !replaying && (
+              {/* Final answer — shown beneath the list view (graph view already
+                  renders the Decision node, so we don't double up). */}
+              {run.final_answer && !replaying && view === "list" && (
                 <div className="mt-3 rounded-md border border-[#ce93d8]/30 bg-[#ce93d8]/5 p-4">
                   <p className="text-xs font-medium text-[#ce93d8]">
                     Final Answer

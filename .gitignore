@@ -35,3 +35,16 @@ out/
 
 # Project
 workspace/
+
+# Test artifacts
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+
+# AI tooling artifacts (never push)
+.claude/
+.sixth/
+.codex/
+.cursor/
+.aider*

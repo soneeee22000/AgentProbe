@@ -1,5 +1,8 @@
 """Application configuration loaded from environment variables."""
 
+import json
+
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -71,7 +74,35 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:3001",
     ]
-    """Allowed CORS origins."""
+    """Allowed CORS origins (defaults). Override with ``CORS_ORIGINS_EXTRA`` to
+    append production origins (e.g. the Vercel deploy URL) without losing the
+    localhost defaults during development."""
+
+    cors_origins_extra: str = ""
+    """Comma-separated additional CORS origins, appended at boot. Set via the
+    ``CORS_ORIGINS_EXTRA`` env var, e.g.
+    ``CORS_ORIGINS_EXTRA=https://agentprobe.vercel.app,https://www.example.com``.
+    JSON list literals are also accepted (``["https://foo","https://bar"]``)."""
+
+    @model_validator(mode="after")
+    def _merge_cors_origins(self) -> "Settings":
+        raw = self.cors_origins_extra.strip()
+        if not raw:
+            return self
+        if raw.startswith("["):
+            try:
+                extras = json.loads(raw)
+            except json.JSONDecodeError:
+                extras = []
+        else:
+            extras = [item.strip() for item in raw.split(",") if item.strip()]
+        if isinstance(extras, list):
+            existing = set(self.cors_origins)
+            for origin in extras:
+                if origin and origin not in existing:
+                    self.cors_origins.append(origin)
+                    existing.add(origin)
+        return self
 
     environment: str = "development"
     """Application environment (development or production)."""

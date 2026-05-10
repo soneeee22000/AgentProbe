@@ -1,6 +1,12 @@
 # AgentProbe
 
-**A from-scratch ReAct Agent Observatory** — observe, debug, and benchmark LLM agents with a built-in failure taxonomy, cross-model comparison, and production-grade evaluation harness.
+> **A ReAct agent observatory built to instrument the gap between what an agent decides and what actually happens in production.**
+
+Most agent demos work. Most agent deployments don't. AgentProbe is a from-scratch ReAct loop — parser, dispatcher, failure detector, streaming layer, all auditable — instrumented with an 8-category failure taxonomy and a decision graph view that turns every run into reproducible diagnostic data.
+
+![Decision Graph view of a failed agent run](docs/screenshots/decision-graph-fail.svg)
+
+_Above: a single agent run rendered as a decision graph. The red dashed edge marks the deterministic detection of `hallucinated_tool` — the agent invoked `weather_forecast`, the registry rejected it, the run continued and silently drifted into a `goal_drift` final answer about the weather instead of the population that was asked for. Both failures appear as red badges; both are reproducible from the seeded demo run at `/runs/demo-fail-001`._
 
 [![CI](https://github.com/soneeee22000/AgentProbe/actions/workflows/ci.yml/badge.svg)](https://github.com/soneeee22000/AgentProbe/actions)
 ![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776ab.svg)
@@ -10,11 +16,17 @@
 
 ---
 
-## Why This Exists
+## Why this exists
 
-Most "AI agent" demos are thin wrappers around LangChain. **AgentProbe builds the entire ReAct loop from scratch** — the parser, the tool dispatch, the failure detection, the streaming — so every layer is transparent and observable.
+The agent industry is converging on a single uncomfortable truth: **the bug isn't in the model — it's in the gap between the model's intent and the action that gets executed.** Without something inspecting every reasoning step, every tool call, and every failure mode, you're shipping confidence with no grounding.
 
-The **failure taxonomy** is the differentiator: every run is annotated with _exactly which failure modes occurred, at which step, and why._ This transforms agent debugging from "it didn't work" into quantified, actionable diagnostics.
+AgentProbe is the diagnostic side of that problem. It does three things competing tools usually don't:
+
+1. **No framework lock-in.** The ReAct loop is implemented from scratch (~500 LOC) — every line of the reasoning path is auditable, not buried in a LangChain abstraction.
+2. **A real failure taxonomy.** 8 categories, each with deterministic detection rules. `hallucinated_tool` is a tool name lookup, not a vibe. `goal_drift` is keyword overlap, not an LLM judge.
+3. **Decision-graph visualization.** Every run renders as a directed graph of reasoning nodes — Thought → Action → Observation cycles, with failures inline on the failing edge. The same shape any explainability or audit surface needs.
+
+Built to be the kind of tool a serious agent platform team would either build internally or buy.
 
 ---
 
@@ -22,17 +34,25 @@ The **failure taxonomy** is the differentiator: every run is annotated with _exa
 
 | Feature                      | Description                                                                                             |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Decision Graph view**      | Every run renders as a directed graph of reasoning nodes; failures appear inline on the failing edge    |
 | **Real-time Playground**     | Type a query, watch the agent reason step-by-step via SSE streaming                                     |
-| **8-Type Failure Taxonomy**  | Automatic classification: hallucinated tools, malformed actions, context overflow, goal drift, and more |
+| **8-Type Failure Taxonomy**  | Deterministic classification: hallucinated tools, malformed actions, context overflow, goal drift, etc. |
 | **Multi-Model Benchmarking** | 50+ test cases across 5 categories with composite scoring (answer + tools + efficiency + reliability)   |
 | **Cross-Model Compare**      | Side-by-side dual-trace execution on the same query                                                     |
 | **5 LLM Providers**          | Groq, Ollama, OpenAI, Anthropic, Google — with dynamic availability detection                           |
+| **Run Replay**               | Replay any persisted run as an SSE stream, identical to the original execution                          |
 | **Analytics Dashboard**      | Failure distributions, model performance heatmaps, KPI overview cards                                   |
 | **Custom Tools**             | Build HTTP or static tools via the UI — agent uses them in real-time                                    |
 | **Prompt Engineering**       | Create, save, and A/B test custom system prompts                                                        |
 | **Agent Memory**             | Persistent key-value memory across runs via save/recall tools                                           |
-| **Auth System**              | JWT + API key authentication with per-user data scoping                                                 |
+| **Auth + multi-tenant**      | JWT + API keys, per-user data scoping, RBAC-ready row filtering                                         |
 | **Export**                   | CSV and PDF export for benchmark results and run traces                                                 |
+
+### Decision graph view
+
+Every persisted run can be viewed as a directed graph of reasoning steps. Each row is one ReAct cycle (`Thought → Action → Observation`), with the chosen tool labelled on the action node and any failure surfaced inline as a red badge plus dashed edge. Click a node to inspect the raw content, latency, and token cost — the same shape any explainability or audit surface needs.
+
+> Open any run at `/runs/<id>` and toggle **Graph / List**. The graph view is the default.
 
 ---
 
@@ -250,6 +270,23 @@ docker-compose up --build
 # Backend:  http://localhost:8000
 # API Docs: http://localhost:8000/docs
 ```
+
+### Demo data — see the decision graph immediately
+
+After the stack is up, seed two illustrative runs (one success, one failure with `hallucinated_tool` + `goal_drift`) so the graph view has something interesting to show without a network call:
+
+```bash
+# From repo root, with the backend running
+docker compose exec backend python -m scripts.seed_demo_runs
+
+# Or against a local SQLite dev DB
+cd backend && python -m scripts.seed_demo_runs
+```
+
+Then open:
+
+- `http://localhost:3000/runs/demo-happy-001` — clean ReAct path (calculator → final answer)
+- `http://localhost:3000/runs/demo-fail-001` — failure trace with two distinct failure modes inline on the graph
 
 ### Manual Setup
 
