@@ -46,9 +46,9 @@ interface CompareStore {
 }
 
 export const useCompareStore = create<CompareStore>((set) => ({
-  leftModel: "llama-3.1-8b-instant",
-  rightModel: "llama3-70b-8192",
-  leftProvider: "groq",
+  leftModel: "gemini-2.5-flash-lite",
+  rightModel: "llama-3.3-70b-versatile",
+  leftProvider: "google",
   rightProvider: "groq",
   query: "",
   leftSteps: [],

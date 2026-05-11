@@ -55,8 +55,8 @@ export const useRunStore = create<RunStore>((set) => ({
   summary: null,
   activeToolName: null,
   query: "",
-  model: "llama-3.1-8b-instant",
-  provider: "groq",
+  model: "gemini-2.5-flash-lite",
+  provider: "google",
 
   setQuery: (query) => set({ query }),
   setModel: (model) => set({ model }),

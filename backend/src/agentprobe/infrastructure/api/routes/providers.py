@@ -89,11 +89,26 @@ _PROVIDER_CATALOG: list[dict] = [
 
 @router.get("/providers", response_model=list[ProviderInfo])
 async def list_providers() -> list[ProviderInfo]:
-    """Return all providers with their availability and models."""
-    settings = get_settings()
-    result: list[ProviderInfo] = []
+    """Return providers with their availability and models.
 
+    On a public deploy, ``DEMO_ALLOWED_PROVIDERS=groq,google`` filters the
+    catalog so only those names are returned — protects the operator's
+    paid OpenAI/Anthropic keys from random visitors and hides Ollama
+    which can't run in the cloud.
+    """
+    settings = get_settings()
+    raw_allowlist = settings.demo_allowed_providers.strip()
+    allowlist = (
+        {name.strip().lower() for name in raw_allowlist.split(",") if name.strip()}
+        if raw_allowlist
+        else None
+    )
+
+    result: list[ProviderInfo] = []
     for catalog_entry in _PROVIDER_CATALOG:
+        if allowlist is not None and catalog_entry["name"] not in allowlist:
+            continue
+
         key_field = catalog_entry["key_field"]
         if key_field is None:
             available = True  # Ollama is always "available" (local)
