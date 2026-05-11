@@ -34,9 +34,7 @@ def create_save_memory_tool(
             value = parts[1].strip() if len(parts) > 1 else ""
 
         if not key or not value:
-            return (
-                "[ERROR] save_memory requires key and value. " 'Use: {"key": "...", "value": "..."}'
-            )
+            return '[ERROR] save_memory requires key and value. Use: {"key": "...", "value": "..."}'
 
         entry = MemoryEntry(
             id=str(uuid.uuid4()),

@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
+from sqlalchemy.pool import StaticPool
 
 DEFAULT_DATABASE_URL = "sqlite+aiosqlite:///./agentprobe.db"
 
@@ -58,6 +59,12 @@ def get_engine(
 
     if _is_sqlite(normalized):
         kwargs["connect_args"] = {"check_same_thread": False}
+        # In-memory SQLite gives each connection its own isolated database,
+        # so the lifespan creates tables on connection A and request handlers
+        # see connection B with no tables. StaticPool pins one connection for
+        # the engine's lifetime — the standard fix for this class of bug.
+        if ":memory:" in normalized:
+            kwargs["poolclass"] = StaticPool
     else:
         kwargs["pool_size"] = pool_size
         kwargs["max_overflow"] = max_overflow

@@ -26,7 +26,7 @@ class RequestValidatorMiddleware(BaseHTTPMiddleware):
                 status_code=413,
                 content={
                     "detail": (
-                        f"Request body too large. " f"Maximum size is {self._max_body_bytes} bytes."
+                        f"Request body too large. Maximum size is {self._max_body_bytes} bytes."
                     ),
                 },
             )

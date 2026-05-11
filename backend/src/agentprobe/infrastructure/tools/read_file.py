@@ -43,7 +43,7 @@ def _create_read_fn(workspace_path: str | None = None):
             return f"[ERROR] Invalid path: {exc}"
 
         if not str(target).startswith(str(workspace)):
-            return "[ERROR] Path traversal denied. " "File must be within the workspace directory."
+            return "[ERROR] Path traversal denied. File must be within the workspace directory."
 
         if not target.is_file():
             return f"[ERROR] File not found: {file_path}"

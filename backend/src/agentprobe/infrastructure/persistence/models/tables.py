@@ -154,7 +154,7 @@ class StepModel(Base):
 
     def __repr__(self) -> str:
         """Return a human-readable representation."""
-        return f"<StepModel id={self.id} run_id={self.run_id!r} " f"index={self.step_index}>"
+        return f"<StepModel id={self.id} run_id={self.run_id!r} index={self.step_index}>"
 
 
 class FailureModel(Base):
@@ -180,7 +180,7 @@ class FailureModel(Base):
 
     def __repr__(self) -> str:
         """Return a human-readable representation."""
-        return f"<FailureModel id={self.id} type={self.failure_type!r} " f"run_id={self.run_id!r}>"
+        return f"<FailureModel id={self.id} type={self.failure_type!r} run_id={self.run_id!r}>"
 
 
 class CustomToolModel(Base):
@@ -312,8 +312,7 @@ class BenchmarkSuiteModel(Base):
     def __repr__(self) -> str:
         """Return a human-readable representation."""
         return (
-            f"<BenchmarkSuiteModel id={self.id!r} model={self.model_id!r} "
-            f"status={self.status!r}>"
+            f"<BenchmarkSuiteModel id={self.id!r} model={self.model_id!r} status={self.status!r}>"
         )
 
 
@@ -356,6 +355,4 @@ class BenchmarkResultModel(Base):
 
     def __repr__(self) -> str:
         """Return a human-readable representation."""
-        return (
-            f"<BenchmarkResultModel id={self.id} suite={self.suite_id!r} " f"passed={self.passed}>"
-        )
+        return f"<BenchmarkResultModel id={self.id} suite={self.suite_id!r} passed={self.passed}>"

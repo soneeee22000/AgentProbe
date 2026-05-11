@@ -65,7 +65,7 @@ class ToolRegistry(IToolRegistry):
         tool = self._tools.get(name)
         if tool is None:
             available = ", ".join(sorted(self._tools.keys()))
-            return f"[ERROR] Tool '{name}' does not exist. " f"Available tools: {available}"
+            return f"[ERROR] Tool '{name}' does not exist. Available tools: {available}"
         try:
             return tool.fn(args)
         except Exception as exc:
@@ -91,9 +91,7 @@ class ToolRegistry(IToolRegistry):
             lines.append(f"Arguments: {tool.args_schema}")
             lines.append("")
 
-        lines.append(
-            "To use a tool, respond with:\n" "Action: <tool_name>\n" "Action Input: <arguments>"
-        )
+        lines.append("To use a tool, respond with:\nAction: <tool_name>\nAction Input: <arguments>")
         return "\n".join(lines)
 
     def list_tools(self) -> list[ToolDefinition]:
