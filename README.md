@@ -4,9 +4,9 @@
 
 Most agent demos work. Most agent deployments don't. AgentProbe is a from-scratch ReAct loop — parser, dispatcher, failure detector, streaming layer, all auditable — instrumented with an 8-category failure taxonomy and a decision graph view that turns every run into reproducible diagnostic data.
 
-![Decision Graph view of a failed agent run](docs/screenshots/decision-graph-fail.svg)
+![Decision Graph view of a failed agent run](docs/screenshots/decision-graph.png)
 
-_Above: a single agent run rendered as a decision graph. The red dashed edge marks the deterministic detection of `hallucinated_tool` — the agent invoked `weather_forecast`, the registry rejected it, the run continued and silently drifted into a `goal_drift` final answer about the weather instead of the population that was asked for. Both failures appear as red badges; both are reproducible from the seeded demo run at `/runs/demo-fail-001`._
+_Above: a single agent run rendered as a decision graph (live capture from production). The red `WEATHER_FORECAST` action marks the deterministic detection of `hallucinated_tool` — the agent invoked a tool the registry didn't have, the orchestrator surfaced an `[ERROR]` observation, the agent recovered with `web_search`, then drifted into a `goal_drift` final answer about Lyon's weather instead of its population. Both failures appear as red badges on the run header; both are reproducible from the seeded demo run at `/runs/demo-fail-001`._
 
 **Live demo:** [agent-probe-one.vercel.app/runs/demo-fail-001](https://agent-probe-one.vercel.app/runs/demo-fail-001) · [demo-happy-001](https://agent-probe-one.vercel.app/runs/demo-happy-001) · [API health](https://agentprobe-production-0e0b.up.railway.app/api/v1/health)
 
@@ -55,6 +55,43 @@ Built to be the kind of tool a serious agent platform team would either build in
 Every persisted run can be viewed as a directed graph of reasoning steps. Each row is one ReAct cycle (`Thought → Action → Observation`), with the chosen tool labelled on the action node and any failure surfaced inline as a red badge plus dashed edge. Click a node to inspect the raw content, latency, and token cost — the same shape any explainability or audit surface needs.
 
 > Open any run at `/runs/<id>` and toggle **Graph / List**. The graph view is the default.
+
+### Screenshots
+
+All captures are pulled live from the production deploy at [agent-probe-one.vercel.app](https://agent-probe-one.vercel.app) — no mockups, no styled stills.
+
+<table>
+  <tr>
+    <td width="50%">
+      <a href="docs/screenshots/side-panel-hallucinated-tool.png">
+        <img src="docs/screenshots/side-panel-hallucinated-tool.png" alt="Side panel showing hallucinated_tool detection" />
+      </a>
+      <p><sub><b>Hallucinated tool detection.</b> Click the red <code>WEATHER_FORECAST</code> action node — the side panel surfaces the deterministic detection rule (<i>tool not in registry</i>), the offending arguments, and the step index.</sub></p>
+    </td>
+    <td width="50%">
+      <a href="docs/screenshots/side-panel-goal-drift.png">
+        <img src="docs/screenshots/side-panel-goal-drift.png" alt="Side panel showing goal_drift on the final answer" />
+      </a>
+      <p><sub><b>Goal drift on the final answer.</b> Click the red <code>DECISION</code> node — the agent answered about Lyon's weather, not its population. Detected by keyword overlap, surfaced as a <code>goal_drift</code> badge on the run header.</sub></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <a href="docs/screenshots/list-view.png">
+        <img src="docs/screenshots/list-view.png" alt="List view of the same agent run" />
+      </a>
+      <p><sub><b>List view.</b> Same run, flat chronological. Useful when you want to read the actual <code>[ERROR]</code> observation text without spatial reasoning about graph layout.</sub></p>
+    </td>
+    <td width="50%">
+      <a href="docs/screenshots/analytics.png">
+        <img src="docs/screenshots/analytics.png" alt="Analytics dashboard with failure distribution and model comparison" />
+      </a>
+      <p><sub><b>Analytics dashboard.</b> Aggregate failure distribution, cross-model comparison (avg steps, avg tokens, success rate), and a per-model failure breakdown — all driven by SQL aggregates over the persisted runs.</sub></p>
+    </td>
+  </tr>
+</table>
+
+> Captures are reproducible: `node scripts/capture-screenshots.mjs` re-runs the full set against the live deploy.
 
 ---
 
