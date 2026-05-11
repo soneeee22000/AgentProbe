@@ -12,24 +12,27 @@ import {
 } from "@/components/ui/select";
 import { fetchProviders, type ProviderInfo } from "@/lib/api";
 
-/** Fallback models when providers endpoint is unavailable. */
+/** Fallback models when providers endpoint is unavailable. Mirrors the
+ * public-demo allowlist so a network blip doesn't surface paid providers. */
 const FALLBACK_PROVIDERS: ProviderInfo[] = [
+  {
+    name: "google",
+    display_name: "Google",
+    available: true,
+    models: [
+      { id: "gemini-2.5-flash-lite", name: "Gemini 2.5 Flash Lite" },
+      { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash" },
+    ],
+  },
   {
     name: "groq",
     display_name: "Groq",
     available: true,
     models: [
+      { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B Versatile" },
       { id: "llama-3.1-8b-instant", name: "Llama 3.1 8B Instant" },
-      { id: "llama-3.1-70b-versatile", name: "Llama 3.1 70B Versatile" },
-      { id: "mixtral-8x7b-32768", name: "Mixtral 8x7B" },
       { id: "gemma2-9b-it", name: "Gemma 2 9B IT" },
     ],
-  },
-  {
-    name: "ollama",
-    display_name: "Ollama (Local)",
-    available: true,
-    models: [{ id: "llama3.1:8b", name: "Llama 3.1 8B" }],
   },
 ];
 

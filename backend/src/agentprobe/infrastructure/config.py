@@ -49,11 +49,20 @@ class Settings(BaseSettings):
     agent_workspace: str = "./workspace"
     """Directory used by agents for temporary file operations."""
 
-    default_model: str = "llama-3.1-8b-instant"
-    """Default LLM model identifier."""
+    default_model: str = "gemini-2.5-flash-lite"
+    """Default LLM model identifier — fast + free (Gemini free tier)."""
 
-    default_provider: str = "groq"
-    """Default inference provider name."""
+    default_provider: str = "google"
+    """Default inference provider name — picked because Gemini's free tier is the
+    most reliable first-impression for the public demo. Override locally via
+    ``DEFAULT_PROVIDER``/``DEFAULT_MODEL`` if you want a different default."""
+
+    demo_allowed_providers: str = ""
+    """Comma-separated allowlist of providers shown to public users. When set,
+    the ``/api/v1/providers`` endpoint filters the catalog to just these names.
+    Empty (default) shows everything that has a key configured. Set on the public
+    deploy to prevent random visitors from triggering paid OpenAI/Anthropic calls
+    against the operator's keys (e.g. ``DEMO_ALLOWED_PROVIDERS=groq,google``)."""
 
     max_steps: int = 10
     """Maximum number of ReAct loop iterations per run."""
