@@ -88,6 +88,7 @@ async def get_current_user(request: Request) -> UserResponse:
         raise HTTPException(status_code=401, detail="Authentication required")
 
     from agentprobe.infrastructure.api.dependencies import get_user_repository
+
     repo = get_user_repository()
     user = await repo.get_by_id(user_id)
     if not user:

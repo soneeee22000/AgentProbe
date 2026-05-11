@@ -21,6 +21,7 @@ def create_save_memory_tool(
     Returns:
         Tuple of (name, description, args_schema, handler_fn).
     """
+
     async def handler(args: str) -> str:
         """Save a key-value pair to persistent memory."""
         try:
@@ -33,10 +34,7 @@ def create_save_memory_tool(
             value = parts[1].strip() if len(parts) > 1 else ""
 
         if not key or not value:
-            return (
-                '[ERROR] save_memory requires key and value. '
-                'Use: {"key": "...", "value": "..."}'
-            )
+            return '[ERROR] save_memory requires key and value. Use: {"key": "...", "value": "..."}'
 
         entry = MemoryEntry(
             id=str(uuid.uuid4()),
@@ -65,6 +63,7 @@ def create_recall_memory_tool(
     Returns:
         Tuple of (name, description, args_schema, handler_fn).
     """
+
     async def handler(args: str) -> str:
         """Recall a value from persistent memory by key."""
         key = args.strip().strip('"').strip("'")

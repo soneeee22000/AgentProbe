@@ -118,9 +118,7 @@ async def replay_run(run_id: str) -> StreamingResponse:
     run = await repo.get_by_id(run_id)
 
     if not run:
-        raise HTTPException(
-            status_code=404, detail=f"Run '{run_id}' not found."
-        )
+        raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found.")
 
     async def replay_stream() -> AsyncGenerator[str, None]:
         """Yield steps as SSE events with timing delays."""

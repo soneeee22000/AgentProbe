@@ -43,11 +43,7 @@ def _make_run(
 
     for i in range(step_count):
         tool = tools_used[i] if tools_used and i < len(tools_used) else None
-        failure = (
-            FailureType.HALLUCINATED_TOOL
-            if has_failures and i == 0
-            else FailureType.NONE
-        )
+        failure = FailureType.HALLUCINATED_TOOL if has_failures and i == 0 else FailureType.NONE
         step = AgentStep(
             step_type=StepType.ACTION if tool else StepType.THOUGHT,
             content=f"Step {i}",
@@ -96,9 +92,7 @@ class TestScoringEngine:
     def test_answer_contained_in_response(self) -> None:
         """Expected answer contained in actual should score high."""
         case = _make_case(expected_answer="Paris")
-        run = _make_run(
-            final_answer="The capital of France is Paris."
-        )
+        run = _make_run(final_answer="The capital of France is Paris.")
         result = self.scorer.score_run(case, run)
         assert result.answer_correct is True
 
@@ -132,9 +126,7 @@ class TestScoringEngine:
 
     def test_tool_matching_jaccard(self) -> None:
         """Partial tool overlap should use Jaccard similarity."""
-        score = ScoringEngine._check_tools(
-            ["calculator", "web_search"], ["calculator"]
-        )
+        score = ScoringEngine._check_tools(["calculator", "web_search"], ["calculator"])
         assert score == pytest.approx(0.5)
 
     def test_no_expected_tools(self) -> None:

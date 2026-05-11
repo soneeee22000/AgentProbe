@@ -4,7 +4,6 @@ Uses the AsyncGroq client to call Groq's hosted inference API
 for fast completions on open-weight models.
 """
 
-
 from groq import AsyncGroq
 
 from agentprobe.domain.ports.llm_provider import ILLMProvider, LLMResponse

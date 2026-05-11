@@ -6,9 +6,9 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from agentprobe.application.services import BenchmarkSeeder
+from agentprobe.infrastructure.api import dependencies as deps
 from agentprobe.infrastructure.api.dependencies import get_settings
 from agentprobe.infrastructure.api.routes import (
     agent_router,
@@ -19,7 +19,6 @@ from agentprobe.infrastructure.api.routes import (
     runs_router,
     tools_router,
 )
-from agentprobe.infrastructure.persistence.models.database import get_engine
 from agentprobe.infrastructure.persistence.models.tables import Base
 
 logger = logging.getLogger(__name__)
@@ -27,27 +26,32 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    """Application lifespan — create tables and seed benchmarks on startup."""
+    """Application lifespan — create tables and seed benchmarks on startup.
+
+    Shares the engine and session factory with ``dependencies._ensure_db``
+    so request handlers and the lifespan see the same database. Critical
+    for in-memory SQLite, where each connection is otherwise an isolated
+    database — without sharing, tables created here would be invisible
+    to request handlers.
+    """
     settings = get_settings()
-    engine = get_engine(
-        settings.database_url,
-        pool_size=settings.database_pool_size,
-        max_overflow=settings.database_max_overflow,
-    )
+    deps._ensure_db()
+    assert deps._engine is not None and deps._session_factory is not None
 
     # Only auto-create tables for SQLite (dev/test). PostgreSQL uses Alembic.
     if settings.database_url.startswith("sqlite"):
-        async with engine.begin() as conn:
+        async with deps._engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
 
-    session_factory = async_sessionmaker(engine, class_=AsyncSession)
     seeded = await BenchmarkSeeder.seed(
-        session_factory, data_path=settings.benchmark_data_path
+        deps._session_factory, data_path=settings.benchmark_data_path
     )
     logger.info("Benchmark seeder completed — %d cases seeded.", seeded)
 
     yield
-    await engine.dispose()
+    await deps._engine.dispose()
+    deps._engine = None
+    deps._session_factory = None
 
 
 def create_app() -> FastAPI:
@@ -172,6 +176,7 @@ def _register_legacy_routes(app: FastAPI) -> None:
     async def legacy_tools() -> dict:
         """Legacy tools endpoint."""
         from agentprobe.infrastructure.api.dependencies import get_tool_registry
+
         registry = get_tool_registry()
         return {
             "tools": [

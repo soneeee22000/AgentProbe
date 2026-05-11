@@ -59,12 +59,14 @@ class MockSessionFactory:
 @pytest.mark.asyncio
 async def test_failure_analytics_empty() -> None:
     """Analytics should handle empty database gracefully."""
-    session = MockSession({
-        "by_type": MockResult([]),
-        "by_model": MockResult([]),
-        "total": MockResult([0]),
-        "failed": MockResult([0]),
-    })
+    session = MockSession(
+        {
+            "by_type": MockResult([]),
+            "by_model": MockResult([]),
+            "total": MockResult([0]),
+            "failed": MockResult([0]),
+        }
+    )
     service = AnalyticsService(session_factory=MockSessionFactory(session))
     result = await service.get_failure_analytics()
 
@@ -76,18 +78,24 @@ async def test_failure_analytics_empty() -> None:
 @pytest.mark.asyncio
 async def test_failure_analytics_with_data() -> None:
     """Analytics should aggregate failure counts correctly."""
-    session = MockSession({
-        "by_type": MockResult([
-            ("hallucinated_tool", 5),
-            ("malformed_action", 3),
-        ]),
-        "by_model": MockResult([
-            ("llama-3.1-8b", "hallucinated_tool", 3),
-            ("llama-3.1-8b", "malformed_action", 2),
-        ]),
-        "total": MockResult([10]),
-        "failed": MockResult([4]),
-    })
+    session = MockSession(
+        {
+            "by_type": MockResult(
+                [
+                    ("hallucinated_tool", 5),
+                    ("malformed_action", 3),
+                ]
+            ),
+            "by_model": MockResult(
+                [
+                    ("llama-3.1-8b", "hallucinated_tool", 3),
+                    ("llama-3.1-8b", "malformed_action", 2),
+                ]
+            ),
+            "total": MockResult([10]),
+            "failed": MockResult([4]),
+        }
+    )
     service = AnalyticsService(session_factory=MockSessionFactory(session))
     result = await service.get_failure_analytics()
 
@@ -100,10 +108,12 @@ async def test_failure_analytics_with_data() -> None:
 @pytest.mark.asyncio
 async def test_model_analytics_empty() -> None:
     """Model analytics should handle empty database."""
-    session = MockSession({
-        "stats": MockResult([]),
-        "steps": MockResult([]),
-    })
+    session = MockSession(
+        {
+            "stats": MockResult([]),
+            "steps": MockResult([]),
+        }
+    )
     service = AnalyticsService(session_factory=MockSessionFactory(session))
     result = await service.get_model_analytics()
 
@@ -113,14 +123,20 @@ async def test_model_analytics_empty() -> None:
 @pytest.mark.asyncio
 async def test_model_analytics_with_data() -> None:
     """Model analytics should compute per-model stats."""
-    session = MockSession({
-        "stats": MockResult([
-            ("llama-3.1-8b", 20, 15, 1500.0, 150.0),
-        ]),
-        "steps": MockResult([
-            ("llama-3.1-8b", 4.5),
-        ]),
-    })
+    session = MockSession(
+        {
+            "stats": MockResult(
+                [
+                    ("llama-3.1-8b", 20, 15, 1500.0, 150.0),
+                ]
+            ),
+            "steps": MockResult(
+                [
+                    ("llama-3.1-8b", 4.5),
+                ]
+            ),
+        }
+    )
     service = AnalyticsService(session_factory=MockSessionFactory(session))
     result = await service.get_model_analytics()
 

@@ -48,10 +48,7 @@ class AgentRun:
     @property
     def succeeded(self) -> bool:
         """Whether the run produced a final answer without exceeding max steps."""
-        return (
-            self.final_answer is not None
-            and FailureType.MAX_STEPS_EXCEEDED not in self.failures
-        )
+        return self.final_answer is not None and FailureType.MAX_STEPS_EXCEEDED not in self.failures
 
     @property
     def status(self) -> str:

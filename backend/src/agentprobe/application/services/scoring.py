@@ -16,9 +16,7 @@ EFFICIENT_STEP_THRESHOLD = 3
 class ScoringEngine:
     """Scores agent runs against benchmark cases using composite metrics."""
 
-    def score_run(
-        self, case: BenchmarkCase, run: AgentRun
-    ) -> BenchmarkResult:
+    def score_run(self, case: BenchmarkCase, run: AgentRun) -> BenchmarkResult:
         """Score a completed run against a benchmark case.
 
         Args:
@@ -28,12 +26,8 @@ class ScoringEngine:
         Returns:
             A BenchmarkResult with pass/fail and detailed scores.
         """
-        answer_score = self._check_answer(
-            case.expected_answer, run.final_answer or ""
-        )
-        tools_score = self._check_tools(
-            case.expected_tools, self._extract_tools(run)
-        )
+        answer_score = self._check_answer(case.expected_answer, run.final_answer or "")
+        tools_score = self._check_tools(case.expected_tools, self._extract_tools(run))
         efficiency_score = self._check_efficiency(len(run.steps))
         reliability_score = self._check_reliability(run)
 
@@ -91,9 +85,7 @@ class ScoringEngine:
         return len(overlap) / len(expected_words)
 
     @staticmethod
-    def _check_tools(
-        expected: list[str], actual: list[str]
-    ) -> float:
+    def _check_tools(expected: list[str], actual: list[str]) -> float:
         """Compare expected vs actual tools using Jaccard similarity.
 
         Args:

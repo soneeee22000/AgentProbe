@@ -24,35 +24,45 @@ def _make_run(run_id: str = "test-1", query: str = "What is 2+2?") -> AgentRun:
         model="llama-3.1-8b-instant",
         provider="groq",
     )
-    run.add_step(AgentStep(
-        step_type=StepType.SYSTEM,
-        content="Starting...",
-        step_index=0,
-    ))
-    run.add_step(AgentStep(
-        step_type=StepType.THOUGHT,
-        content="I need to calculate",
-        step_index=1,
-        token_count=20,
-        latency_ms=150.0,
-    ))
-    run.add_step(AgentStep(
-        step_type=StepType.ACTION,
-        content="calculator(2+2)",
-        step_index=2,
-        tool_name="calculator",
-        tool_args="2+2",
-    ))
-    run.add_step(AgentStep(
-        step_type=StepType.OBSERVATION,
-        content="2+2 = 4",
-        step_index=3,
-    ))
-    run.add_step(AgentStep(
-        step_type=StepType.FINAL,
-        content="The answer is 4.",
-        step_index=4,
-    ))
+    run.add_step(
+        AgentStep(
+            step_type=StepType.SYSTEM,
+            content="Starting...",
+            step_index=0,
+        )
+    )
+    run.add_step(
+        AgentStep(
+            step_type=StepType.THOUGHT,
+            content="I need to calculate",
+            step_index=1,
+            token_count=20,
+            latency_ms=150.0,
+        )
+    )
+    run.add_step(
+        AgentStep(
+            step_type=StepType.ACTION,
+            content="calculator(2+2)",
+            step_index=2,
+            tool_name="calculator",
+            tool_args="2+2",
+        )
+    )
+    run.add_step(
+        AgentStep(
+            step_type=StepType.OBSERVATION,
+            content="2+2 = 4",
+            step_index=3,
+        )
+    )
+    run.add_step(
+        AgentStep(
+            step_type=StepType.FINAL,
+            content="The answer is 4.",
+            step_index=4,
+        )
+    )
     run.finish(final_answer="The answer is 4.")
     return run
 
@@ -77,7 +87,8 @@ class TestSQLAlchemyRunRepository:
 
     @pytest.mark.asyncio
     async def test_get_nonexistent_returns_none(
-        self, repo: SQLAlchemyRunRepository,
+        self,
+        repo: SQLAlchemyRunRepository,
     ) -> None:
         """Getting a non-existent run should return None."""
         result = await repo.get_by_id("nonexistent")
@@ -85,7 +96,8 @@ class TestSQLAlchemyRunRepository:
 
     @pytest.mark.asyncio
     async def test_list_runs_returns_all(
-        self, repo: SQLAlchemyRunRepository,
+        self,
+        repo: SQLAlchemyRunRepository,
     ) -> None:
         """List should return all saved runs."""
         await repo.save(_make_run("run-a", "query A"))
@@ -96,7 +108,8 @@ class TestSQLAlchemyRunRepository:
 
     @pytest.mark.asyncio
     async def test_list_runs_with_limit(
-        self, repo: SQLAlchemyRunRepository,
+        self,
+        repo: SQLAlchemyRunRepository,
     ) -> None:
         """Limit should restrict result count."""
         await repo.save(_make_run("r1"))
@@ -108,7 +121,8 @@ class TestSQLAlchemyRunRepository:
 
     @pytest.mark.asyncio
     async def test_delete_removes_run(
-        self, repo: SQLAlchemyRunRepository,
+        self,
+        repo: SQLAlchemyRunRepository,
     ) -> None:
         """Delete should remove run and return True."""
         await repo.save(_make_run("del-me"))
@@ -120,7 +134,8 @@ class TestSQLAlchemyRunRepository:
 
     @pytest.mark.asyncio
     async def test_delete_nonexistent_returns_false(
-        self, repo: SQLAlchemyRunRepository,
+        self,
+        repo: SQLAlchemyRunRepository,
     ) -> None:
         """Deleting non-existent run returns False."""
         deleted = await repo.delete("ghost")
@@ -137,7 +152,8 @@ class TestSQLAlchemyRunRepository:
 
     @pytest.mark.asyncio
     async def test_save_run_with_failures(
-        self, repo: SQLAlchemyRunRepository,
+        self,
+        repo: SQLAlchemyRunRepository,
     ) -> None:
         """Runs with failures should persist failure records."""
         run = AgentRun(
@@ -146,12 +162,14 @@ class TestSQLAlchemyRunRepository:
             model="llama",
             provider="groq",
         )
-        run.add_step(AgentStep(
-            step_type=StepType.ERROR,
-            content="hallucinated",
-            step_index=0,
-            failure_type=FailureType.HALLUCINATED_TOOL,
-        ))
+        run.add_step(
+            AgentStep(
+                step_type=StepType.ERROR,
+                content="hallucinated",
+                step_index=0,
+                failure_type=FailureType.HALLUCINATED_TOOL,
+            )
+        )
         run.finish()
         await repo.save(run)
 

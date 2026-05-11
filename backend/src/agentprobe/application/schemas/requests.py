@@ -6,9 +6,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-SUPPORTED_PROVIDERS = Literal[
-    "groq", "ollama", "openai", "anthropic", "google"
-]
+SUPPORTED_PROVIDERS = Literal["groq", "ollama", "openai", "anthropic", "google"]
 
 
 class RunRequest(BaseModel):

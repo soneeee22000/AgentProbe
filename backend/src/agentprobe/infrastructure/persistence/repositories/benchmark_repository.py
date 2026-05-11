@@ -28,9 +28,7 @@ class SQLAlchemyBenchmarkRepository(IBenchmarkRepository):
         session_factory: Factory that produces AsyncSession instances.
     """
 
-    def __init__(
-        self, session_factory: async_sessionmaker[AsyncSession]
-    ) -> None:
+    def __init__(self, session_factory: async_sessionmaker[AsyncSession]) -> None:
         self._session_factory = session_factory
 
     async def save_case(self, case: BenchmarkCase) -> None:
@@ -63,9 +61,7 @@ class SQLAlchemyBenchmarkRepository(IBenchmarkRepository):
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(BenchmarkCaseModel).where(
-                    BenchmarkCaseModel.id == case_id
-                )
+                select(BenchmarkCaseModel).where(BenchmarkCaseModel.id == case_id)
             )
             row = result.scalar_one_or_none()
             if row is None:
@@ -145,9 +141,7 @@ class SQLAlchemyBenchmarkRepository(IBenchmarkRepository):
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(BenchmarkSuiteModel).order_by(
-                    BenchmarkSuiteModel.created_at.desc()
-                )
+                select(BenchmarkSuiteModel).order_by(BenchmarkSuiteModel.created_at.desc())
             )
             rows = result.scalars().all()
             return [self._suite_to_domain(r, load_results=False) for r in rows]
@@ -172,9 +166,7 @@ class SQLAlchemyBenchmarkRepository(IBenchmarkRepository):
                 )
                 session.add(model)
 
-    async def get_results_for_suite(
-        self, suite_id: str
-    ) -> list[BenchmarkResult]:
+    async def get_results_for_suite(self, suite_id: str) -> list[BenchmarkResult]:
         """Get all results for a given suite.
 
         Args:
@@ -185,9 +177,7 @@ class SQLAlchemyBenchmarkRepository(IBenchmarkRepository):
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(BenchmarkResultModel).where(
-                    BenchmarkResultModel.suite_id == suite_id
-                )
+                select(BenchmarkResultModel).where(BenchmarkResultModel.suite_id == suite_id)
             )
             rows = result.scalars().all()
             return [self._result_to_domain(r) for r in rows]
@@ -213,9 +203,7 @@ class SQLAlchemyBenchmarkRepository(IBenchmarkRepository):
         )
 
     @staticmethod
-    def _suite_to_domain(
-        row: BenchmarkSuiteModel, *, load_results: bool = True
-    ) -> BenchmarkSuite:
+    def _suite_to_domain(row: BenchmarkSuiteModel, *, load_results: bool = True) -> BenchmarkSuite:
         """Convert a BenchmarkSuiteModel to a domain entity.
 
         Args:
