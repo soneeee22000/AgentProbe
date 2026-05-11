@@ -49,8 +49,6 @@ class IBenchmarkRepository(ABC):
         ...
 
     @abstractmethod
-    async def get_results_for_suite(
-        self, suite_id: str
-    ) -> list[BenchmarkResult]:
+    async def get_results_for_suite(self, suite_id: str) -> list[BenchmarkResult]:
         """Get all results for a suite."""
         ...

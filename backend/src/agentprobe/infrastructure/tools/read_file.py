@@ -43,10 +43,7 @@ def _create_read_fn(workspace_path: str | None = None):
             return f"[ERROR] Invalid path: {exc}"
 
         if not str(target).startswith(str(workspace)):
-            return (
-                "[ERROR] Path traversal denied. "
-                "File must be within the workspace directory."
-            )
+            return "[ERROR] Path traversal denied. " "File must be within the workspace directory."
 
         if not target.is_file():
             return f"[ERROR] File not found: {file_path}"
@@ -83,9 +80,7 @@ def register_read_file(
                 "Provide a path relative to the workspace root. "
                 "Maximum read size is 50 KB."
             ),
-            args_schema=(
-                '{"file_path": "string (relative path, e.g. \'src/main.py\')"}'
-            ),
+            args_schema=('{"file_path": "string (relative path, e.g. \'src/main.py\')"}'),
             fn=_create_read_fn(workspace_path),
         )
     )

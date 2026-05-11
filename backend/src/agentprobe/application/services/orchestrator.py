@@ -232,14 +232,16 @@ class AgentOrchestrator:
                 run.add_step(error_step)
                 yield error_step.to_dict()
                 messages.append({"role": "assistant", "content": raw_output})
-                messages.append({
-                    "role": "user",
-                    "content": (
-                        "Observation: [FORMAT ERROR] Your response didn't follow "
-                        "the required format. Please respond with "
-                        "Thought: / Action: / Action Input:"
-                    ),
-                })
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": (
+                            "Observation: [FORMAT ERROR] Your response didn't follow "
+                            "the required format. Please respond with "
+                            "Thought: / Action: / Action Input:"
+                        ),
+                    }
+                )
                 continue
 
             action = parsed.action
@@ -287,10 +289,12 @@ class AgentOrchestrator:
 
             # Feed observation back into context
             messages.append({"role": "assistant", "content": raw_output})
-            messages.append({
-                "role": "user",
-                "content": f"Observation: {observation}",
-            })
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"Observation: {observation}",
+                }
+            )
         else:
             # Max steps exceeded
             timeout_step = AgentStep(

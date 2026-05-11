@@ -24,12 +24,14 @@ class TestToolRegistry:
     def test_dispatch_returns_result(self) -> None:
         """Dispatch should call the tool function and return its result."""
         registry = ToolRegistry()
-        registry.register(ToolDefinition(
-            name="echo",
-            description="Echo",
-            args_schema="str",
-            fn=lambda x: f"echo: {x}",
-        ))
+        registry.register(
+            ToolDefinition(
+                name="echo",
+                description="Echo",
+                args_schema="str",
+                fn=lambda x: f"echo: {x}",
+            )
+        )
         assert registry.dispatch("echo", "hello") == "echo: hello"
 
     def test_dispatch_nonexistent_tool_returns_error(self) -> None:
@@ -42,24 +44,36 @@ class TestToolRegistry:
     def test_dispatch_catches_exceptions(self) -> None:
         """Tool exceptions should be caught and returned as errors."""
         registry = ToolRegistry()
-        registry.register(ToolDefinition(
-            name="bad",
-            description="Fails",
-            args_schema="str",
-            fn=lambda x: 1 / 0,
-        ))
+        registry.register(
+            ToolDefinition(
+                name="bad",
+                description="Fails",
+                args_schema="str",
+                fn=lambda x: 1 / 0,
+            )
+        )
         result = registry.dispatch("bad", "")
         assert "[ERROR]" in result
 
     def test_get_tools_prompt_includes_all_tools(self) -> None:
         """Prompt should mention all registered tools."""
         registry = ToolRegistry()
-        registry.register(ToolDefinition(
-            name="a", description="Tool A", args_schema="str", fn=lambda x: x,
-        ))
-        registry.register(ToolDefinition(
-            name="b", description="Tool B", args_schema="str", fn=lambda x: x,
-        ))
+        registry.register(
+            ToolDefinition(
+                name="a",
+                description="Tool A",
+                args_schema="str",
+                fn=lambda x: x,
+            )
+        )
+        registry.register(
+            ToolDefinition(
+                name="b",
+                description="Tool B",
+                args_schema="str",
+                fn=lambda x: x,
+            )
+        )
         prompt = registry.get_tools_prompt()
         assert "a" in prompt
         assert "b" in prompt
@@ -68,9 +82,14 @@ class TestToolRegistry:
     def test_list_tools_returns_all(self) -> None:
         """list_tools should return all registered tools."""
         registry = ToolRegistry()
-        registry.register(ToolDefinition(
-            name="x", description="X", args_schema="str", fn=lambda x: x,
-        ))
+        registry.register(
+            ToolDefinition(
+                name="x",
+                description="X",
+                args_schema="str",
+                fn=lambda x: x,
+            )
+        )
         assert len(registry.list_tools()) == 1
 
 

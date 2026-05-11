@@ -49,9 +49,7 @@ class EvalHarness:
         Yields:
             dict events: suite_start, case_start, case_complete, suite_complete.
         """
-        cases = await self._repo.list_cases(
-            category=category, difficulty=difficulty
-        )
+        cases = await self._repo.list_cases(category=category, difficulty=difficulty)
 
         if not cases:
             yield {"type": "error", "message": "No benchmark cases found."}
@@ -117,15 +115,9 @@ class EvalHarness:
         completed_count = len(cases)
         suite.status = "completed"
         suite.success_rate = (
-            round(passed_count / completed_count, 3)
-            if completed_count > 0
-            else 0.0
+            round(passed_count / completed_count, 3) if completed_count > 0 else 0.0
         )
-        suite.avg_steps = (
-            round(total_steps / completed_count, 1)
-            if completed_count > 0
-            else 0.0
-        )
+        suite.avg_steps = round(total_steps / completed_count, 1) if completed_count > 0 else 0.0
         suite.failure_summary = failure_counts
         await self._repo.save_suite(suite)
 

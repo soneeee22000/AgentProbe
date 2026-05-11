@@ -81,9 +81,7 @@ class RateLimiterMiddleware(BaseHTTPMiddleware):
 
         return bucket
 
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         """Check rate limit before processing the request."""
         client_ip = request.client.host if request.client else "unknown"
         bucket = self._get_bucket(client_ip)

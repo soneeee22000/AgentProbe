@@ -61,9 +61,7 @@ class SQLAlchemyMemoryRepository(IMemoryRepository):
         """List all memory entries for a user."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(MemoryEntryModel).where(
-                    MemoryEntryModel.user_id == user_id
-                )
+                select(MemoryEntryModel).where(MemoryEntryModel.user_id == user_id)
             )
             return [self._to_entity(m) for m in result.scalars().all()]
 

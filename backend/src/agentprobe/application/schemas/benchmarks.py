@@ -12,24 +12,16 @@ class CreateCaseRequest(BaseModel):
     category: str = Field(..., description="Case category")
     difficulty: str = Field(..., description="Difficulty level")
     expected_answer: str = Field(..., description="Expected answer")
-    expected_tools: list[str] = Field(
-        default_factory=list, description="Expected tool names"
-    )
+    expected_tools: list[str] = Field(default_factory=list, description="Expected tool names")
 
 
 class StartSuiteRequest(BaseModel):
     """Request to start a benchmark suite run."""
 
-    model: str = Field(
-        default="llama-3.1-8b-instant", description="LLM model ID"
-    )
+    model: str = Field(default="llama-3.1-8b-instant", description="LLM model ID")
     provider: str = Field(default="groq", description="LLM provider")
-    category: str | None = Field(
-        default=None, description="Filter cases by category"
-    )
-    difficulty: str | None = Field(
-        default=None, description="Filter cases by difficulty"
-    )
+    category: str | None = Field(default=None, description="Filter cases by category")
+    difficulty: str | None = Field(default=None, description="Filter cases by difficulty")
 
 
 class BenchmarkCaseResponse(BaseModel):

@@ -36,10 +36,7 @@ async def list_cases(
     """List benchmark cases with optional filters."""
     repo = get_benchmark_repository()
     cases = await repo.list_cases(category=category, difficulty=difficulty)
-    return [
-        BenchmarkCaseResponse(**case.to_dict())
-        for case in cases
-    ]
+    return [BenchmarkCaseResponse(**case.to_dict()) for case in cases]
 
 
 @router.get("/cases/{case_id}", response_model=BenchmarkCaseResponse)
@@ -48,9 +45,7 @@ async def get_case(case_id: str) -> BenchmarkCaseResponse:
     repo = get_benchmark_repository()
     case = await repo.get_case(case_id)
     if not case:
-        raise HTTPException(
-            status_code=404, detail=f"Case '{case_id}' not found."
-        )
+        raise HTTPException(status_code=404, detail=f"Case '{case_id}' not found.")
     return BenchmarkCaseResponse(**case.to_dict())
 
 
@@ -102,7 +97,7 @@ async def start_suite(request: StartSuiteRequest) -> StreamingResponse:
             difficulty=request.difficulty,
         ):
             yield f"data: {json.dumps(event)}\n\n"
-        yield "data: {\"type\": \"done\"}\n\n"
+        yield 'data: {"type": "done"}\n\n'
 
     return StreamingResponse(
         event_stream(),
@@ -133,13 +128,8 @@ async def get_suite(suite_id: str) -> BenchmarkSuiteResponse:
     repo = get_benchmark_repository()
     suite = await repo.get_suite(suite_id)
     if not suite:
-        raise HTTPException(
-            status_code=404, detail=f"Suite '{suite_id}' not found."
-        )
+        raise HTTPException(status_code=404, detail=f"Suite '{suite_id}' not found.")
     return BenchmarkSuiteResponse(
         **suite.to_dict(),
-        results=[
-            BenchmarkResultResponse(**r.to_dict())
-            for r in suite.results
-        ],
+        results=[BenchmarkResultResponse(**r.to_dict()) for r in suite.results],
     )

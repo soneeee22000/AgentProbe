@@ -154,10 +154,7 @@ class StepModel(Base):
 
     def __repr__(self) -> str:
         """Return a human-readable representation."""
-        return (
-            f"<StepModel id={self.id} run_id={self.run_id!r} "
-            f"index={self.step_index}>"
-        )
+        return f"<StepModel id={self.id} run_id={self.run_id!r} " f"index={self.step_index}>"
 
 
 class FailureModel(Base):
@@ -183,10 +180,7 @@ class FailureModel(Base):
 
     def __repr__(self) -> str:
         """Return a human-readable representation."""
-        return (
-            f"<FailureModel id={self.id} type={self.failure_type!r} "
-            f"run_id={self.run_id!r}>"
-        )
+        return f"<FailureModel id={self.id} type={self.failure_type!r} " f"run_id={self.run_id!r}>"
 
 
 class CustomToolModel(Base):
@@ -273,9 +267,7 @@ class BenchmarkCaseModel(Base):
     category: Mapped[str] = mapped_column(String, nullable=False)
     difficulty: Mapped[str] = mapped_column(String, nullable=False)
     expected_answer: Mapped[str] = mapped_column(Text, nullable=False)
-    expected_tools: Mapped[str] = mapped_column(
-        Text, nullable=False, default="[]"
-    )
+    expected_tools: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
     is_builtin: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     results: Mapped[list["BenchmarkResultModel"]] = relationship(
@@ -304,9 +296,7 @@ class BenchmarkSuiteModel(Base):
     total_cases: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     success_rate: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     avg_steps: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
-    failure_summary: Mapped[str] = mapped_column(
-        Text, nullable=False, default="{}"
-    )
+    failure_summary: Mapped[str] = mapped_column(Text, nullable=False, default="{}")
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
@@ -353,12 +343,8 @@ class BenchmarkResultModel(Base):
     )
     passed: Mapped[bool] = mapped_column(Boolean, nullable=False)
     score: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
-    answer_correct: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
-    tools_correct: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
+    answer_correct: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    tools_correct: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     failures: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
 
     suite: Mapped["BenchmarkSuiteModel"] = relationship(
@@ -371,6 +357,5 @@ class BenchmarkResultModel(Base):
     def __repr__(self) -> str:
         """Return a human-readable representation."""
         return (
-            f"<BenchmarkResultModel id={self.id} suite={self.suite_id!r} "
-            f"passed={self.passed}>"
+            f"<BenchmarkResultModel id={self.id} suite={self.suite_id!r} " f"passed={self.passed}>"
         )

@@ -44,29 +44,35 @@ class TestAgentRun:
     def test_add_step_accumulates_tokens(self) -> None:
         """Token counts should accumulate across steps."""
         run = AgentRun(query="test", run_id="abc", model="llama")
-        run.add_step(AgentStep(
-            step_type=StepType.THOUGHT,
-            content="t",
-            step_index=0,
-            token_count=50,
-        ))
-        run.add_step(AgentStep(
-            step_type=StepType.THOUGHT,
-            content="t",
-            step_index=1,
-            token_count=30,
-        ))
+        run.add_step(
+            AgentStep(
+                step_type=StepType.THOUGHT,
+                content="t",
+                step_index=0,
+                token_count=50,
+            )
+        )
+        run.add_step(
+            AgentStep(
+                step_type=StepType.THOUGHT,
+                content="t",
+                step_index=1,
+                token_count=30,
+            )
+        )
         assert run.total_tokens == 80
 
     def test_add_step_tracks_failures(self) -> None:
         """Failures should be recorded in the run's failure list."""
         run = AgentRun(query="test", run_id="abc", model="llama")
-        run.add_step(AgentStep(
-            step_type=StepType.ERROR,
-            content="err",
-            step_index=0,
-            failure_type=FailureType.MALFORMED_ACTION,
-        ))
+        run.add_step(
+            AgentStep(
+                step_type=StepType.ERROR,
+                content="err",
+                step_index=0,
+                failure_type=FailureType.MALFORMED_ACTION,
+            )
+        )
         assert FailureType.MALFORMED_ACTION in run.failures
 
     def test_succeeded_true_when_final_answer(self) -> None:
@@ -84,12 +90,14 @@ class TestAgentRun:
     def test_succeeded_false_when_max_steps(self) -> None:
         """Run that exceeded max steps should not succeed."""
         run = AgentRun(query="test", run_id="abc", model="llama")
-        run.add_step(AgentStep(
-            step_type=StepType.ERROR,
-            content="timeout",
-            step_index=0,
-            failure_type=FailureType.MAX_STEPS_EXCEEDED,
-        ))
+        run.add_step(
+            AgentStep(
+                step_type=StepType.ERROR,
+                content="timeout",
+                step_index=0,
+                failure_type=FailureType.MAX_STEPS_EXCEEDED,
+            )
+        )
         run.finish(final_answer="partial")
         assert run.succeeded is False
 
@@ -111,8 +119,16 @@ class TestAgentRun:
         run.finish(final_answer="done")
         s = run.summary()
         expected_keys = {
-            "run_id", "query", "model", "provider", "succeeded",
-            "status", "step_count", "total_tokens", "duration_ms",
-            "failures", "final_answer",
+            "run_id",
+            "query",
+            "model",
+            "provider",
+            "succeeded",
+            "status",
+            "step_count",
+            "total_tokens",
+            "duration_ms",
+            "failures",
+            "final_answer",
         }
         assert set(s.keys()) == expected_keys

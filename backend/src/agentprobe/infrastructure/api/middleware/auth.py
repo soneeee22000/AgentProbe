@@ -8,17 +8,17 @@ from agentprobe.application.services.auth import AuthService
 from agentprobe.domain.ports.user_repository import IUserRepository
 
 # Paths that don't require authentication
-_PUBLIC_PATHS = frozenset({
-    "/api/v1/health",
-    "/api/health",
-    "/docs",
-    "/openapi.json",
-    "/redoc",
-})
-
-_PUBLIC_PREFIXES = (
-    "/auth/",
+_PUBLIC_PATHS = frozenset(
+    {
+        "/api/v1/health",
+        "/api/health",
+        "/docs",
+        "/openapi.json",
+        "/redoc",
+    }
 )
+
+_PUBLIC_PREFIXES = ("/auth/",)
 
 
 class AuthMiddleware(BaseHTTPMiddleware):
@@ -43,9 +43,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
         self._auth = auth_service
         self._user_repo = user_repo
 
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         """Authenticate the request before processing."""
         path = request.url.path
 

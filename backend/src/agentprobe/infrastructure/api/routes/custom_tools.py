@@ -49,14 +49,13 @@ def _get_repo():  # type: ignore[no-untyped-def]
     from agentprobe.infrastructure.persistence.repositories.custom_tool_repository import (
         SQLAlchemyCustomToolRepository,
     )
+
     _ensure_db()
     return SQLAlchemyCustomToolRepository(session_factory=_session_factory)
 
 
 @router.post("", response_model=CustomToolResponse)
-async def create_custom_tool(
-    body: CreateCustomToolRequest, request: Request
-) -> CustomToolResponse:
+async def create_custom_tool(body: CreateCustomToolRequest, request: Request) -> CustomToolResponse:
     """Create a new custom tool."""
     user_id = _get_user_id(request)
     repo = _get_repo()

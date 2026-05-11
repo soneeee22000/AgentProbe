@@ -78,10 +78,7 @@ class AnthropicProvider(ILLMProvider):
 
         content = ""
         if response.content:
-            text_parts = [
-                block.text for block in response.content
-                if hasattr(block, "text")
-            ]
+            text_parts = [block.text for block in response.content if hasattr(block, "text")]
             content = "".join(text_parts)
 
         return LLMResponse(

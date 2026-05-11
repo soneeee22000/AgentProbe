@@ -91,11 +91,7 @@ def detect_repeated_action(
     """
     from agentprobe.domain.entities.step import StepType
 
-    recent_actions = [
-        s for s in steps[-lookback:]
-        if s.step_type == StepType.ACTION
-    ]
+    recent_actions = [s for s in steps[-lookback:] if s.step_type == StepType.ACTION]
     return any(
-        step.tool_name == action and step.tool_args == action_input
-        for step in recent_actions
+        step.tool_name == action and step.tool_args == action_input for step in recent_actions
     )

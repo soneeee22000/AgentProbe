@@ -53,9 +53,7 @@ class TestBenchmarkCaseCRUD:
     """Tests for benchmark case persistence."""
 
     @pytest.mark.asyncio
-    async def test_save_and_get_case(
-        self, bench_repo: SQLAlchemyBenchmarkRepository
-    ) -> None:
+    async def test_save_and_get_case(self, bench_repo: SQLAlchemyBenchmarkRepository) -> None:
         """Save a case and retrieve it by ID."""
         case = _make_case()
         await bench_repo.save_case(case)
@@ -68,17 +66,13 @@ class TestBenchmarkCaseCRUD:
         assert loaded.expected_tools == ["calculator"]
 
     @pytest.mark.asyncio
-    async def test_get_nonexistent_case(
-        self, bench_repo: SQLAlchemyBenchmarkRepository
-    ) -> None:
+    async def test_get_nonexistent_case(self, bench_repo: SQLAlchemyBenchmarkRepository) -> None:
         """Getting a non-existent case returns None."""
         loaded = await bench_repo.get_case("nonexistent")
         assert loaded is None
 
     @pytest.mark.asyncio
-    async def test_list_cases_all(
-        self, bench_repo: SQLAlchemyBenchmarkRepository
-    ) -> None:
+    async def test_list_cases_all(self, bench_repo: SQLAlchemyBenchmarkRepository) -> None:
         """List all cases without filters."""
         await bench_repo.save_case(_make_case("case-a"))
         await bench_repo.save_case(_make_case("case-b"))
@@ -87,9 +81,7 @@ class TestBenchmarkCaseCRUD:
         assert len(cases) == 2
 
     @pytest.mark.asyncio
-    async def test_list_cases_by_category(
-        self, bench_repo: SQLAlchemyBenchmarkRepository
-    ) -> None:
+    async def test_list_cases_by_category(self, bench_repo: SQLAlchemyBenchmarkRepository) -> None:
         """Filter cases by category."""
         math_case = _make_case("math-1")
         search_case = BenchmarkCase(
@@ -107,9 +99,7 @@ class TestBenchmarkCaseCRUD:
         assert math_cases[0].category == BenchmarkCategory.MATH
 
     @pytest.mark.asyncio
-    async def test_upsert_case(
-        self, bench_repo: SQLAlchemyBenchmarkRepository
-    ) -> None:
+    async def test_upsert_case(self, bench_repo: SQLAlchemyBenchmarkRepository) -> None:
         """Saving a case with existing ID should update it."""
         case = _make_case("upsert-1")
         await bench_repo.save_case(case)
@@ -126,9 +116,7 @@ class TestBenchmarkSuiteCRUD:
     """Tests for benchmark suite persistence."""
 
     @pytest.mark.asyncio
-    async def test_save_and_get_suite(
-        self, bench_repo: SQLAlchemyBenchmarkRepository
-    ) -> None:
+    async def test_save_and_get_suite(self, bench_repo: SQLAlchemyBenchmarkRepository) -> None:
         """Save a suite and retrieve it with results."""
         suite = _make_suite()
         await bench_repo.save_suite(suite)
@@ -139,9 +127,7 @@ class TestBenchmarkSuiteCRUD:
         assert loaded.success_rate == 0.8
 
     @pytest.mark.asyncio
-    async def test_list_suites(
-        self, bench_repo: SQLAlchemyBenchmarkRepository
-    ) -> None:
+    async def test_list_suites(self, bench_repo: SQLAlchemyBenchmarkRepository) -> None:
         """List all suites."""
         await bench_repo.save_suite(_make_suite("s1"))
         await bench_repo.save_suite(_make_suite("s2"))
@@ -155,7 +141,8 @@ class TestBenchmarkResultCRUD:
 
     @pytest.mark.asyncio
     async def test_save_and_get_results(
-        self, bench_repo: SQLAlchemyBenchmarkRepository,
+        self,
+        bench_repo: SQLAlchemyBenchmarkRepository,
         db_session: async_sessionmaker[AsyncSession],
     ) -> None:
         """Save results and retrieve by suite ID."""
@@ -166,9 +153,7 @@ class TestBenchmarkResultCRUD:
         )
 
         run_repo = SQLAlchemyRunRepository(session_factory=db_session)
-        run = AgentRun(
-            query="test", run_id="run-1", model="llama", provider="groq"
-        )
+        run = AgentRun(query="test", run_id="run-1", model="llama", provider="groq")
         run.finish(final_answer="4")
         await run_repo.save(run)
 

@@ -90,7 +90,9 @@ async def _execute_http_tool(config: dict[str, Any], args: str) -> str:
         async with httpx.AsyncClient(timeout=30.0) as client:
             if method == "GET":
                 response = await client.get(
-                    url, params={"q": args}, headers=headers,
+                    url,
+                    params={"q": args},
+                    headers=headers,
                 )
             else:
                 response = await client.post(

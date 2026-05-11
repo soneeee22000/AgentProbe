@@ -65,9 +65,7 @@ async def session_factory() -> async_sessionmaker[AsyncSession]:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-    factory: async_sessionmaker[AsyncSession] = async_sessionmaker(
-        engine, class_=AsyncSession
-    )
+    factory: async_sessionmaker[AsyncSession] = async_sessionmaker(engine, class_=AsyncSession)
     yield factory  # type: ignore[misc]
     await engine.dispose()
 
@@ -97,14 +95,10 @@ async def test_seed_skips_when_cases_exist(
     benchmark_json_path: str,
 ) -> None:
     """Seeding a non-empty database should be idempotent and return 0."""
-    first_count = await BenchmarkSeeder.seed(
-        session_factory, data_path=benchmark_json_path
-    )
+    first_count = await BenchmarkSeeder.seed(session_factory, data_path=benchmark_json_path)
     assert first_count == len(SAMPLE_CASES)
 
-    second_count = await BenchmarkSeeder.seed(
-        session_factory, data_path=benchmark_json_path
-    )
+    second_count = await BenchmarkSeeder.seed(session_factory, data_path=benchmark_json_path)
     assert second_count == 0
 
     repo = SQLAlchemyBenchmarkRepository(session_factory)
@@ -117,9 +111,7 @@ async def test_seed_with_real_data_file(
     session_factory: async_sessionmaker[AsyncSession],
 ) -> None:
     """Seed using the actual benchmark_cases.json shipped with the project."""
-    data_path = str(
-        Path(__file__).resolve().parents[2] / "data" / "benchmark_cases.json"
-    )
+    data_path = str(Path(__file__).resolve().parents[2] / "data" / "benchmark_cases.json")
     count = await BenchmarkSeeder.seed(session_factory, data_path=data_path)
 
     assert count > 0

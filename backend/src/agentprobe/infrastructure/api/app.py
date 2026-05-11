@@ -41,9 +41,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             await conn.run_sync(Base.metadata.create_all)
 
     session_factory = async_sessionmaker(engine, class_=AsyncSession)
-    seeded = await BenchmarkSeeder.seed(
-        session_factory, data_path=settings.benchmark_data_path
-    )
+    seeded = await BenchmarkSeeder.seed(session_factory, data_path=settings.benchmark_data_path)
     logger.info("Benchmark seeder completed — %d cases seeded.", seeded)
 
     yield
@@ -172,6 +170,7 @@ def _register_legacy_routes(app: FastAPI) -> None:
     async def legacy_tools() -> dict:
         """Legacy tools endpoint."""
         from agentprobe.infrastructure.api.dependencies import get_tool_registry
+
         registry = get_tool_registry()
         return {
             "tools": [

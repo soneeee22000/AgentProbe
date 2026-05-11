@@ -50,6 +50,7 @@ def _get_user_id(request: Request) -> str:
 def _get_session_factory():  # type: ignore[no-untyped-def]
     """Get the database session factory."""
     from agentprobe.infrastructure.api.dependencies import _ensure_db, _session_factory
+
     _ensure_db()
     return _session_factory
 
@@ -91,9 +92,7 @@ async def list_prompts(request: Request) -> list[PromptResponse]:
 
     async with sf() as session:
         result = await session.execute(
-            select(PromptTemplateModel).where(
-                PromptTemplateModel.user_id == user_id
-            )
+            select(PromptTemplateModel).where(PromptTemplateModel.user_id == user_id)
         )
         models = result.scalars().all()
 

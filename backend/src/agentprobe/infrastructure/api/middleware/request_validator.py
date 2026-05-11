@@ -17,9 +17,7 @@ class RequestValidatorMiddleware(BaseHTTPMiddleware):
         super().__init__(app)  # type: ignore[arg-type]
         self._max_body_bytes = max_body_bytes
 
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         """Validate request and add security headers to response."""
         # Check Content-Length header if present
         content_length = request.headers.get("content-length")
@@ -28,8 +26,7 @@ class RequestValidatorMiddleware(BaseHTTPMiddleware):
                 status_code=413,
                 content={
                     "detail": (
-                        f"Request body too large. "
-                        f"Maximum size is {self._max_body_bytes} bytes."
+                        f"Request body too large. " f"Maximum size is {self._max_body_bytes} bytes."
                     ),
                 },
             )

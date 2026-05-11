@@ -161,6 +161,7 @@ def get_user_repository():  # type: ignore[no-untyped-def]
     from agentprobe.infrastructure.persistence.repositories.user_repository import (
         SQLAlchemyUserRepository,
     )
+
     _ensure_db()
     return SQLAlchemyUserRepository(session_factory=_session_factory)
 
@@ -168,6 +169,7 @@ def get_user_repository():  # type: ignore[no-untyped-def]
 def get_auth_service():  # type: ignore[no-untyped-def]
     """Create an AuthService with the current settings."""
     from agentprobe.application.services.auth import AuthService
+
     settings = get_settings()
     return AuthService(
         user_repo=get_user_repository(),
